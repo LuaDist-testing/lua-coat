@@ -6,6 +6,9 @@ README
 doc/Point3D.png
 doc/coat.html
 doc/index.html
+doc/inject.html
+doc/inject.png
+doc/memoize.html
 doc/meta_class.html
 doc/meta_role.html
 doc/role.html
@@ -18,6 +21,7 @@ src/Coat/Meta/Role.lua
 src/Coat/Role.lua
 src/Coat/Types.lua
 src/Coat/UML.lua
+src/Coat/file.lua
 src/coat2dot
 test/000-require.t
 test/006-extends.t
@@ -47,13 +51,18 @@ test/102-override.t
 test/103-attr_builder.t
 test/104-attr_lazy_build.t
 test/105-attr_writer.t
+test/106-attr_liskov.t
 test/111-hierarchy.t
 test/112-hierarchy.t
 test/113-create_hierarchy.t
 test/121-singleton.t
+test/122-abstract.t
 test/131-handles-meth.t
 test/132-handles-role.t
 test/133-handles-rolename.t
+test/141-file.t
+test/151-inject.t
+test/161-memoize.t
 test/201-role_requires_meth.t
 test/202-role_meth_modifier.t
 test/203-attr_does.t

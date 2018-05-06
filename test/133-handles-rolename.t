@@ -9,14 +9,14 @@ function method._break ()
 end
 
 class 'Engine'
-with 'Breakable'
+with(Breakable)
 
 class 'Car'
 has.engine = { is = 'rw', does = 'Breakable', handles = 'Breakable' }
 
 require 'Test.More'
 
-plan(6)
+plan(12)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 133.png", 'w')
@@ -35,3 +35,21 @@ ok( car:can '_break', "can _break" )
 car:_break()
 is( _G.seen, "I broke" )
 
+error_like([[Car.has.turbo1 = { is = 'rw', handles = 'Unknown' }]],
+           "^[^:]+:%d+: module 'Unknown' not found")
+
+error_like([[Car.has.turbo2 = { is = 'rw', handles = 'Engine' }]],
+           "^[^:]+:%d+: The handles option requires a table or a Role")
+
+error_like([[Car.has.turbo3 = { is = 'rw', does = 'Boostable', handles = 'Breakable' }]],
+           "^[^:]+:%d+: The handles option requires a does option with the same role")
+
+error_like([[Car.has.turbo4 = { is = 'rw', does = 'Breakable', handles = 'Breakable' }]],
+           "^[^:]+:%d+: Duplicate definition of method _break")
+
+class 'Turbo'
+error_like([[Turbo.with 'Unknown']],
+           "^[^:]+:%d+: module 'Unknown' not found")
+
+error_like([[Turbo.with 'Engine']],
+           "^[^:]+:%d+: bad argument #1 to with %(string or Role expected%)")

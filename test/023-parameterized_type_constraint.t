@@ -16,7 +16,7 @@ has.x = { is = 'rw', isa = 'number' }
 
 require 'Test.More'
 
-plan(11)
+plan(12)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 023.png", 'w')
@@ -51,6 +51,10 @@ error_like(function () a.hash_of_a = 123 end,
 lives_ok(function () a.hash_of_num = { one = 1, two = 2, three = 3 } end, "hash of Num accepted" )
 
 error_like(function () a.hash_of_num = { one = 1, two = 2, three = 'foo' } end,
+           "^[^:]+:%d+: Value for attribute 'hash_of_num' does not validate type constraint 'table<string,number>'",
+           "hash mixed of num and str refused")
+
+error_like(function () a.hash_of_num = { one = 1, two = 2, [true] = 3 } end,
            "^[^:]+:%d+: Value for attribute 'hash_of_num' does not validate type constraint 'table<string,number>'",
            "hash mixed of num and str refused")
 

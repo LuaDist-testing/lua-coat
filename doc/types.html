@@ -75,6 +75,12 @@
         <li><a href="uml.html#examples">Examples</a></li>
       </ul>
     </li>
+    <li><strong>Manual</strong>
+      <ul>
+        <li><a href="inject.html">Dependency Injection</a></li>
+        <li><a href="memoize.html">Memoization</a></li>
+      </ul>
+    </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
       <ul>
         <li><a href="http://github.com/fperrad/lua-Coat/">Git</a></li>
@@ -92,6 +98,32 @@
 and parametrized type which are used in attribute definition.</p>
 
 <p>All functions are stored in a global space.</p>
+
+<p>The option <code>isa</code> handles :</p>
+
+<ul>
+  <li>basic types from Lua</li>
+  <li>Coat classnames</li>
+  <li>subtypes</li>
+  <li>parametrized types</li>
+</ul>
+
+<p>The option <code>does</code> handles :</p>
+
+<ul>
+  <li>Coat rolenames</li>
+</ul>
+
+<p>Subtypes are declared by <code>subtype</code> or <code>enum</code>
+statements.</p>
+
+<p>Parametrized types have the following forms
+(and don't need a preliminary declaration):</p>
+
+<ul>
+  <li><code>table&lt;<em>type</em>&gt;</code></li>
+  <li><code>table&lt;<em>type_k</em>,<em>type_v</em>&gt;</code></li>
+</ul>
 
 <h3>Global Functions</h3>
 
@@ -128,7 +160,7 @@ subtype.NaturalLessThanTen = {
     message = "This number (%d) is not less than ten!",
 }
 
-enum.Colour = { 'Red', 'Green', 'Blue' }
+enum.MyApp.Colour = { 'Red', 'Green', 'Blue' }
 
 subtype.DateTime = {
     as = 'string',

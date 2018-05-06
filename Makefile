@@ -6,6 +6,34 @@ ifndef REV
   REV   := 1
 endif
 
+ifndef DESTDIR
+  DESTDIR := /usr/local
+endif
+BINDIR  := $(DESTDIR)/bin
+LIBDIR  := $(DESTDIR)/share/lua/5.1
+
+install:
+	mkdir -p $(BINDIR)
+	cp src/coat2dot                 $(BINDIR)
+	mkdir -p $(LIBDIR)/Coat/Meta
+	cp src/Coat.lua                 $(LIBDIR)
+	cp src/Coat/Role.lua            $(LIBDIR)/Coat
+	cp src/Coat/Types.lua           $(LIBDIR)/Coat
+	cp src/Coat/UML.lua             $(LIBDIR)/Coat
+	cp src/Coat/file.lua            $(LIBDIR)/Coat
+	cp src/Coat/Meta/Class.lua      $(LIBDIR)/Coat/Meta
+	cp src/Coat/Meta/Role.lua       $(LIBDIR)/Coat/Meta
+
+uninstall:
+	rm -f $(BINDIR)/coat2dot
+	rm -f $(LIBDIR)/Coat.lua
+	rm -f $(LIBDIR)/Coat/Role.lua
+	rm -f $(LIBDIR)/Coat/Types.lua
+	rm -f $(LIBDIR)/Coat/UML.lua
+	rm -f $(LIBDIR)/Coat/file.lua
+	rm -f $(LIBDIR)/Coat/Meta/Class.lua
+	rm -f $(LIBDIR)/Coat/Meta/Role.lua
+
 manifest_pl := \
 use strict; \
 use warnings; \
@@ -59,17 +87,33 @@ dist: $(TARBALL)
 rockspec: $(TARBALL)
 	perl -e '$(rockspec_pl)' rockspec.in > rockspec/lua-coat-$(VERSION)-$(REV).rockspec
 
-export LUA_PATH=;;./src/?.lua;./test/?.lua
+install-rock: clean dist rockspec
+	perl -pe 's{http://cloud.github.com/downloads/fperrad/lua-Coat/}{};' \
+	    rockspec/lua-coat-$(VERSION)-$(REV).rockspec > lua-coat-$(VERSION)-$(REV).rockspec
+	luarocks install lua-coat-$(VERSION)-$(REV).rockspec
+
+ifdef LUA_PATH
+  export LUA_PATH:=$(LUA_PATH);../test/?.lua
+else
+  export LUA_PATH=;;../test/?.lua
+endif
 #export GEN_PNG=1
 
+check: test
+
 test:
-	prove --exec=$(LUA) test/*.t
+	cd src && prove --exec=$(LUA) ../test/*.t
+
+coverage:
+	rm -f src/luacov.stats.out src/luacov.report.out
+	cd src && prove --exec="$(LUA) -lluacov" ../test/*.t
+	cd src && luacov
 
 html:
 	xmllint --noout --valid doc/*.html
 
 clean:
-	rm -f MANIFEST *.bak *.png test/*.png
+	rm -f MANIFEST *.bak src/*.png test/*.png *.rockspec
 
 .PHONY: test rockspec CHANGES
 

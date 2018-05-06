@@ -3,6 +3,8 @@
 -- lua-Coat : <http://lua-coat.luaforge.net/>
 --
 
+local basic_type = type
+local setmetatable = setmetatable
 local next = next
 
 module 'Coat.Meta.Class'
@@ -21,6 +23,7 @@ function has (class, name)
 end
 
 local reserved = {
+    BUILD = true,
     after = true,
     around = true,
     before = true,
@@ -36,16 +39,7 @@ local reserved = {
     override = true,
     type = true,
     with = true,
-    _ATTR = true,
-    _DOES = true,
     _INIT = true,
-    _INSTANCE = true,
-    _ISA = true,
-    _M = true,
-    _MT = true,
-    _NAME = true,
-    _PARENT = true,
-    _ROLE = true,
     __gc = true,
 }
 
@@ -59,8 +53,10 @@ function methods (class)
         repeat
             k, v = next(t, k)
             if not k then return nil end
-        until not reserved[k] and not t._ATTR[k]
+        until not reserved[k]
+          and basic_type(v) == 'function'
           and not k:match '^_get_' and not k:match '^_set_'
+          and not k:match '^_build_'
         return k, v
     end
     return getnext, class, nil
@@ -95,6 +91,9 @@ function roles (class)
                 return role and role._NAME, role
             end
 end
+
+_CACHE = {}
+setmetatable(_CACHE, { __mode = 'v' })
 
 --
 -- Copyright (c) 2009-2010 Francois Perrad

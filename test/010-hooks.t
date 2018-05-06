@@ -37,7 +37,7 @@ end
 
 require 'Test.More'
 
-plan(7)
+plan(9)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 010.png", 'w')
@@ -67,4 +67,10 @@ eq_array( _G.list, {
         'after2:Coat',
         'after3:Coat',
 } )
+
+error_like([[function Child.after:push_elem () end]],
+           "^[^:]+:%d+: Cannot after non%-existent method push_elem in class Child")
+
+error_like([[function Child.before:push_elem () end]],
+           "^[^:]+:%d+: Cannot before non%-existent method push_elem in class Child")
 

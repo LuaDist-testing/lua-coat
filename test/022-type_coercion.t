@@ -17,7 +17,7 @@ has.timestamp = { is = 'ro', isa = 'DateTime', required = true, coerce = true }
 
 require 'Test.More'
 
-plan(5)
+plan(6)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 022.png", 'w')
@@ -37,3 +37,7 @@ error_like([[foo = Record{ timestamp = true }]],
            "^[^:]+:%d+: Invalid type for attribute 'timestamp' %(got boolean, expected string%)",
            "no coercion")
 
+Record.has.field = { is = 'ro', isa = 'Unknown', required = true, coerce = true }
+error_like([[foo = Record{ timestamp = 0, field = '' }]],
+           "^[^:]+:%d+: Coercion is not available for type Unknown",
+           "no mapping")

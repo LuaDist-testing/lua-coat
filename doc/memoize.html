@@ -2,13 +2,13 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Module Coat.UML</title>
+  <title>Memoization</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
   <meta http-equiv="Language" content="en"/>
-  <meta http-equiv="Description" content="Module Coat.UML"/>
-  <meta http-equiv="Keywords" content="lua, coat, uml, to_dot, coat2dot"/>
+  <meta http-equiv="Description" content="Memoization with Coat"/>
+  <meta http-equiv="Keywords" content="lua, coat, memoize, memoization"/>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 <div id="main">
 
 <div id="navigation">
-<h1>Coat.UML</h1>
+<h1>Memoization</h1>
   <ul>
     <li><a href="index.html">Home</a>
       <ul>
@@ -69,7 +69,7 @@
         <li><a href="meta_role.html#reference">Reference</a></li>
       </ul>
     </li>
-    <li><strong>module <code>Coat.UML</code></strong>
+    <li><a href="uml.html">module <code>Coat.UML</code></a>
       <ul>
         <li><a href="uml.html#reference">Reference</a></li>
         <li><a href="uml.html#examples">Examples</a></li>
@@ -78,7 +78,7 @@
     <li><strong>Manual</strong>
       <ul>
         <li><a href="inject.html">Dependency Injection</a></li>
-        <li><a href="memoize.html">Memoization</a></li>
+        <li><strong>Memoization</strong></li>
       </ul>
     </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
@@ -92,52 +92,65 @@
 
 <div id="content">
 
-<h2><a name="reference"></a>References</h2>
-
-<h3>Functions</h3>
-
-<h4><code>Coat.UML.to_dot()</code></h4>
-
-<p>Returns a string in DOT format which contains a UML Class Diagram
-of loaded modules (classes&amp;roles).</p>
-
-<h3>Utilities</h3>
-
-<h4><code>coat2dot [--no-attr] [--no-meth] [--no-meta] module1 [module2, ...]</code></h4>
-
-Generates a UML Class Diagram of modules in DOT
-(<a href="http://www.graphviz.org/">Graphviz</a>) format.
-
-<h3>See Also</h3>
-
-The article <a href="http://www.spinellis.gr/pubs/jrnl/2003-IEEESW-umlgraph/html/article.html">
-On the Declarative Specification of Models</a> by Diomidis Spinellis.
-
 <h2><a name="examples"></a>Examples</h2>
 
-<pre class="example">
-$ coat2dot Point3D > Point3D.dot
-$ dot -T png -o Point3D.png Point3D.dot
-</pre>
+<h3>Rectangle</h3>
 
 <pre class="example">
-$ cat Point3D.dot
-digraph {
+require 'Coat'
 
-    node [shape=record];
+class 'Rectangle'
+has.x               = { is = 'rw', isa = 'number', required = true }
+has.y               = { is = 'rw', isa = 'number', required = true }
 
-    "Point"
-        [label="{\N|y, is rw, isa number\lx, is rw, isa number\l|__tostring()\ldraw()\l}"];
+function overload:__tostring ()
+    return self._CLASS .. ':' .. self.x .. 'x' .. self.y
+end
 
-    "Point3D"
-        [label="{\N|z, is rw, isa number\l|__tostring()\l}"];
-    "Point3D" -> "Point" // extends
-        [arrowhead = onormal, arrowtail = none, arrowsize = 2.0];
+function method:_get_area ()
+    return self.x * self.y
+end
 
-}
+function method:getWeight (density)
+    return self.x * self.y * density
+end
+memoize 'getWeight'
 </pre>
 
-<p><img src="Point3D.png" alt="Point3D.png"/>Point3D.png</p>
+<p>A method could become memoized after its definition.</p>
+
+<p>The memoization is not reversable.</p>
+
+<pre class="example">
+require 'Rectangle'
+
+Rectangle.memoize '_get_area'
+</pre>
+
+<p>All values are memoized in an uniq table <code>Coat.Meta.Class._CLASS</code>.
+This table uses weak reference.</p>
+
+<p>The key is composed of the name of the method and the concatenation of stringified
+parameter (self is the first one).<br /> It is important to define the appropriate
+<code>__tostring</code> for each not basic type.</p>
+
+<h3>Special case : ImmutableRectangle</h3>
+
+<p>Computed attribute of immutable object could be implemented with <code>lazy_build</code>.</p>
+
+<pre class="example">
+require 'Coat'
+
+class 'ImmutableRectangle'
+extends 'Rectangle'
+has.x               = { '+', is = 'ro' }
+has.y               = { '+', is = 'ro' }
+has.area            = { is = 'ro', lazy_build = true }
+
+function method:_build_area ()
+    return self.x * self.y
+end
+</pre>
 
 </div> <!-- id="content" -->
 

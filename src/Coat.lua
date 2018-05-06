@@ -11,12 +11,13 @@ local pcall = pcall
 local rawget = rawget
 local require = require
 local setmetatable = setmetatable
+local tostring = tostring
 local basic_type = type
 local _G = _G
 local debug = require 'debug'
-local package = package
-local string = string
-local table = table
+local package = require 'package'
+local string = require 'string'
+local table = require 'table'
 
 module 'Coat'
 
@@ -88,7 +89,8 @@ function isa (obj, t)
         return false
     end -- walk
 
-    if basic_type(obj) == 'table' and obj._ISA then
+    local tobj = basic_type(obj)
+    if (tobj == 'table' or tobj == 'userdata') and obj._ISA then
         return walk(obj._ISA)
     else
         return basic_type(obj) == t
@@ -117,7 +119,8 @@ function does (obj, r)
         return false
     end -- walk
 
-    if basic_type(obj) == 'table' and obj._DOES then
+    local tobj = basic_type(obj)
+    if (tobj == 'table' or tobj == 'userdata') and obj._DOES then
         return walk(obj._DOES)
     else
         return false
@@ -185,7 +188,7 @@ local function attr_default (options, obj)
     if builder then
         local func = obj[builder]
         if not func then
-            error("method " .. builder .. " not found")
+            error("method " .. builder .. " not found in " .. obj._CLASS)
         end
         return func(obj)
     else
@@ -266,6 +269,8 @@ function _INIT (class, obj, args)
             end
             val = validate(k, opts, val)
             obj._VALUES[k] = val
+        else
+            val = validate(k, opts, obj._VALUES[k])
         end
     end
 
@@ -299,6 +304,9 @@ function has (class, name, options)
             t[k] = v
         end
         for k, v in pairs(options) do
+            if k == 'is' and t[k] == 'ro' then
+                break
+            end
             t[k] = v
         end
         options = t
@@ -306,9 +314,16 @@ function has (class, name, options)
         error("Duplicate definition of attribute " .. name)
     end
 
+    if options.reset and options.required then
+        error "The reset option is incompatible with required option"
+    end
+    if options.inject then
+        options.lazy_build = true
+    end
     if options.lazy_build then
         options.lazy = true
         options.builder = '_build_' .. name
+        options.reset = true
     end
     if options.trigger and basic_type(options.trigger) ~= 'function' then
         error "The trigger option requires a function"
@@ -326,12 +341,15 @@ function has (class, name, options)
 
     if options.is then
         class['_set_' .. name] = function (obj, val)
-            if options.is == 'ro' then
+            local t = rawget(obj, '_VALUES')
+            if options.is == 'ro'
+               and (options.lazy or t[name] ~= nil)
+               and (not options.reset or val ~= nil) then
                 error("Cannot set a read-only attribute ("
                       .. name .. ")")
             end
             val = validate(name, options, val)
-            rawget(obj, '_VALUES')[name] = val
+            t[name] = val
             local trigger = options.trigger
             if trigger then
                 trigger(obj, val)
@@ -347,6 +365,19 @@ function has (class, name, options)
                 t[name] = val
             end
             return t[name]
+        end
+    end
+
+    if options.inject then
+        if not options.does then
+            error "The inject option requires a does option"
+        end
+        class[options.builder] = function (obj)
+            local impl = Meta.class(obj._CLASS)._BINDING[options.does]
+            if not impl then
+                error("No binding found for " .. options.does .. " in class " .. obj._CLASS)
+            end
+            return impl()
         end
     end
 
@@ -477,6 +508,46 @@ function after (class, name, func)
     end
 end
 
+function memoize (class, name)
+    checktype('memoize', 1, name, 'string')
+    local func = class[name]
+    if not func then
+        error("Cannot memoize non-existent method "
+              .. name .. " in class " .. class._NAME)
+    end
+
+    local cache = Meta._CACHE
+    class[name] = function (...)
+        local key = name
+        for _, v in ipairs{...} do
+            key = key .. '|' .. tostring(v)
+        end
+        local result = cache[key]
+        if result == nil then
+            result = func(...)
+            cache[key] =result
+        end
+        return result
+    end
+end
+
+function bind (class, name, impl)
+    checktype('bind', 1, name, 'string')
+    local t = basic_type(impl)
+    if t ~= 'function' then
+        if t == 'string' then
+            impl = require(impl)
+        end
+        if not impl._INIT then
+            argerror('bind', 2, "function or string or Class expected")
+        end
+    end
+    if class._BINDING[name] then
+        error("Duplicate binding of " .. name)
+    end
+    class._BINDING[name] = impl
+end
+
 function extends(class, ...)
     for i, v in ipairs{...} do
         local parent
@@ -567,6 +638,9 @@ function with (class, ...)
                 if basic_type(excludes) == 'string' then
                     excludes = { excludes }
                 end
+                if basic_type(excludes) ~= 'table' then
+                    argerror('with-excludes', i, "table or string expected")
+                end
                 for i, name in ipairs(excludes) do
                     if basic_type(name) ~= 'string' then
                         argerror('with-excludes', i, "string expected")
@@ -621,6 +695,7 @@ local function _class (modname)
     M._ROLE = {}
     M._MT = { __index = M }
     M._ATTR = setmetatable({}, {})
+    M._BINDING = {}
     M.type = type
     M.can = can
     M.isa = isa
@@ -635,8 +710,10 @@ local function _class (modname)
     M.before = setmetatable({}, { __newindex = function (t, k, v) before(M, k, v) end })
     M.around = setmetatable({}, { __newindex = function (t, k, v) around(M, k, v) end })
     M.after = setmetatable({}, { __newindex = function (t, k, v) after(M, k, v) end })
+    M.bind = setmetatable({}, { __newindex = function (t, k, v) bind(M, k, v) end })
     M.extends = function (...) return extends(M, ...) end
     M.with = function (...) return with(M, ...) end
+    M.memoize = function (name) return memoize(M, name) end
     local classes = Meta.classes()
     classes[modname] = M
     return M
@@ -654,7 +731,13 @@ function _G.singleton (modname)
     M.new = M.instance
 end
 
-_VERSION = "0.8.0"
+function _G.abstract (modname)
+    checktype('abstract', 1, modname, 'string')
+    local M = _class(modname)
+    M.new = function () error("Cannot instanciate an abstract class " .. modname) end
+end
+
+_VERSION = "0.8.2"
 _DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
 _COPYRIGHT = "Copyright (c) 2009-2010 Francois Perrad"
 --

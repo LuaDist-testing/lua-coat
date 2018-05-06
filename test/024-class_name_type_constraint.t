@@ -2,17 +2,17 @@
 
 require 'Coat.Types'
 
-coerce.B = { A = function (val) return B{ x = 3 } end }
+coerce.MyApp.B = { ['MyApp.A'] = function (val) return MyApp.B{ x = 3 } end }
 
-class 'A'
+class 'MyApp.A'
 has.x = { is = 'rw', isa = 'number' }
-has.b = { is = 'rw', isa = 'B', coerce = true }
-has.c = { is = 'rw', isa = 'C' }
+has.b = { is = 'rw', isa = 'MyApp.B', coerce = true }
+has.c = { is = 'rw', isa = 'MyApp.C' }
 
-class 'B'
+class 'MyApp.B'
 has.x = { is = 'rw', isa = 'number' }
 
-class 'C'
+class 'MyApp.C'
 has.x = { is = 'rw', isa = 'number' }
 
 require 'Test.More'
@@ -25,18 +25,18 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = A{ x = 1 }
-b = B{ x = 2 }
-ok( a:isa 'A' )
-ok( b:isa 'B' )
+a = MyApp.A{ x = 1 }
+b = MyApp.B{ x = 2 }
+ok( a:isa 'MyApp.A' )
+ok( b:isa 'MyApp.B' )
 a.b = b
 is( a.b.x, 2 )
 a.b = a
 is( a.b.x, 3 ) -- coerced
 
-error_like([[local a = A{ x = 1 }; a.c = A.new()]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got A, expected C%)")
+error_like([[local a = MyApp.A{ x = 1 }; a.c = MyApp.A.new()]],
+           "^[^:]+:%d+: Invalid type for attribute 'c' %(got MyApp.A, expected MyApp.C%)")
 
-error_like([[local a = A{ x = 1 }; a.c = "text"]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got string, expected C%)")
+error_like([[local a = MyApp.A{ x = 1 }; a.c = "text"]],
+           "^[^:]+:%d+: Invalid type for attribute 'c' %(got string, expected MyApp.C%)")
 

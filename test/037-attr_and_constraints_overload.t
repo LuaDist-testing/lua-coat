@@ -7,6 +7,11 @@ subtype.Positive = {
     where = function (n) return n > 0 end
 }
 
+subtype.Range10 = {
+    as = 'Positive',
+    where = function (n) return n < 10 end
+}
+
 class 'Parent'
 has.name = { is = 'rw', isa = 'string' }
 has.lazy_classname = { is = 'ro', lazy = true,
@@ -20,7 +25,7 @@ class 'Child'
 extends 'Parent'
 has.name = { '+', default = "Junior" }
 has.lazy_classname = { '+', default = function () return "Child" end }
-has.type_constrained = { '+', isa = 'string', default = 'empty' }
+has.type_constrained = { '+', isa = 'Range10', default = 7.5 }
 
 
 require 'Test.More'
@@ -56,9 +61,9 @@ is( foo.name, 'John' )
 is( foo.lazy_classname, 'Child' )
 error_like([[local foo = Child.new(); foo.lazy_classname = 'Object']],
            "^[^:]+:%d+: Cannot set a read%-only attribute %(lazy_classname%)")
-is( foo.type_constrained, 'empty' )
-foo.type_constrained = 'text'
-is( foo.type_constrained, 'text' )
+is( foo.type_constrained, 7.5 )
+foo.type_constrained = 9.5
+is( foo.type_constrained, 9.5 )
 error_like([[local foo = Child.new(); foo.type_constrained = -0.5]],
-           "^[^:]+:%d+: Invalid type for attribute 'type_constrained' %(got number, expected string%)")
+           "^[^:]+:%d+: Value for attribute 'type_constrained' does not validate type constraint 'Positive'")
 

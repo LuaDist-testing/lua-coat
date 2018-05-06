@@ -8,7 +8,7 @@
   <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
   <meta http-equiv="Language" content="en"/>
   <meta http-equiv="Description" content="Module Coat"/>
-  <meta http-equiv="Keywords" content="lua, coat, class, after, around, before, can, does, extends, has, instance, isa, overload, override, method, new, singleton, type, with"/>
+  <meta http-equiv="Keywords" content="lua, coat, class, after, around, before, bind, can, does, extends, has, instance, isa, overload, override, method, new, singleton, type, with"/>
 </head>
 
 <body>
@@ -75,6 +75,12 @@
         <li><a href="uml.html#examples">Examples</a></li>
       </ul>
     </li>
+    <li><strong>Manual</strong>
+      <ul>
+        <li><a href="inject.html">Dependency Injection</a></li>
+        <li><a href="memoize.html">Memoization</a></li>
+      </ul>
+    </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
       <ul>
         <li><a href="http://github.com/fperrad/lua-Coat/">Git</a></li>
@@ -89,6 +95,10 @@
 <h2><a name="reference"></a>References</h2>
 
 <h3>Global Functions</h3>
+
+<h4><code>abstract( modname )</code></h4>
+
+<p>Create a Coat abstract class as a standard Lua module.</p>
 
 <h4><code>class( modname )</code></h4>
 
@@ -111,6 +121,10 @@
 <h4><code>before.name = func</code></h4>
 
 <p>Method modifier.</p>
+
+<h4><code>bind.name = class</code> or <code>func</code></h4>
+
+<p>Create a binding for dependency injection.</p>
 
 <h4><code>can( obj, methname )</code> or <code>obj:can( methname )</code></h4>
 
@@ -136,13 +150,19 @@ An item <code>'+'</code> allows overriding.</p>
   <li><code>default</code> : value or function </li>
   <li><code>does</code> : role name</li>
   <li><code>handles</code> : table or role for method delegation</li>
+  <li><code>inject</code> : boolean for dependency injection</li>
   <li><code>is</code> : string <code>(ro|rw)</code></li>
   <li><code>isa</code> : type name</li>
   <li><code>lazy</code> : boolean </li>
   <li><code>lazy_build</code> : boolean </li>
   <li><code>required</code> : boolean </li>
+  <li><code>reset</code> : boolean </li>
   <li><code>trigger</code> : function </li>
 </ul>
+
+<h4><code>instance( args )</code></h4>
+
+<p>Alias of <code>new</code> for <code>singleton</code> class.</p>
 
 <h4><code>isa( obj, t )</code> or <code>obj:isa( t )</code></h4>
 
@@ -160,15 +180,15 @@ An item <code>'+'</code> allows overriding.</p>
 
 <p>Registers a method.</p>
 
+<h4><code>memoize( methname )</code></h4>
+
+<p>Allows memoization for a method.</p>
+
 <h4><code>new( args )</code></h4>
 
 <p>Instanciates a object.</p>
 
 <p>If exist, the user method <code>BUILD</code> is called at the end.</p>
-
-<h4><code>instance( args )</code></h4>
-
-<p>Alias of <code>new</code> for <code>singleton</code> class.</p>
 
 <h4><code>type( obj )</code> or <code>obj:type()</code></h4>
 
@@ -222,6 +242,22 @@ end
 <pre class="example">
 local p1 = Point3D{ x = 1, y = 2, z = 3 }
 p1:draw()
+</pre>
+
+<h3>Tips</h3>
+
+The following code is usually an error because all instance of Foo share the same table
+as attribute bar.
+
+<pre class="example">
+class 'Foo'
+has.bar = { default = {} }
+</pre>
+
+The correct version is :
+
+<pre class="example">
+has.bar = { default = function () return {} end }
 </pre>
 
 </div> <!-- id="content" -->

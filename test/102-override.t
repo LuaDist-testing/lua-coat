@@ -3,6 +3,7 @@
 require 'Coat'
 
 class 'Parent'
+has.foo = { is = 'rw' }
 function method:bar () return 'bar' end
 function method:baz () return 'baz' end
 
@@ -12,7 +13,7 @@ function override:bar () return 'BAR' end
 
 require 'Test.More'
 
-plan(14)
+plan(15)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 102.png", 'w')
@@ -46,4 +47,8 @@ error_like([[Child.method.baz = function (self) return 'baz' end]],
 error_like([[Parent.method.baz = function (self) return 'baz' end]],
            "^[^:]+:%d+: Duplicate definition of method baz",
            "bad 3")
+
+error_like([[Child.method.foo = function () end]],
+           "^[^:]+:%d+: Overwrite definition of attribute foo",
+           "bad 4")
 

@@ -31,7 +31,7 @@ end
 
 require 'Test.More'
 
-plan(8)
+plan(9)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 008.png", 'w')
@@ -59,4 +59,7 @@ eq_array( _G.seen, {
                 'around 1 after',
         'around 2 after',
 } )
+
+error_like([[function Child.around:_orig_ () end]],
+           "^[^:]+:%d+: Cannot around non%-existent method _orig_ in class Child")
 

@@ -16,7 +16,7 @@ has.engine = { is = 'rw', does = 'Breakable', handles = Breakable }
 
 require 'Test.More'
 
-plan(6)
+plan(8)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 132.png", 'w')
@@ -30,8 +30,12 @@ car = Car.new{ engine = Engine.new() }
 ok( car:isa 'Car', "isa Car" )
 ok( car.engine:isa 'Engine' )
 ok( car.engine:does 'Breakable' )
+ok( car.engine:does(Breakable) )
 ok( car:does 'Breakable', "does Breakable" )
 ok( car:can '_break', "can _break" )
 car:_break()
 is( _G.seen, "I broke" )
+
+error_like([[local engine = Engine.new(); engine:does {}]],
+           "^[^:]+:%d+: bad argument #2 to does %(string or Role expected%)")
 

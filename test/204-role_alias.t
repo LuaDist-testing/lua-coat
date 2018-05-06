@@ -33,7 +33,7 @@ end
 
 require 'Test.More'
 
-plan(7)
+plan(12)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 204.png", 'w')
@@ -49,4 +49,24 @@ is( man.is_broken, false )
 ok( man.break_bone )
 ok( man.break_dance )
 ok( man._break )
+
+class 'BadDancer1'
+error_like([[BadDancer1.with( 'Breakable', { alias = 'text' })]],
+           "^[^:]+:%d+: bad argument #2 to with%-alias %(table expected%)")
+
+class 'BadDancer2'
+error_like([[BadDancer2.with( 'Breakable', { alias = { _break = {} } })]],
+           "^[^:]+:%d+: bad argument #2 to with%-alias %(string expected%)")
+
+class 'BadDancer3'
+error_like([[BadDancer3.with( 'Breakable', { alias = { 'break_done' } })]],
+           "^[^:]+:%d+: bad argument #2 to with%-alias %(string expected%)")
+
+class 'BadDancer4'
+error_like([[BadDancer4.with( 'Breakable', { excludes = true })]],
+           "^[^:]+:%d+: bad argument #2 to with%-excludes %(table or string expected%)")
+
+class 'BadDancer5'
+error_like([[BadDancer5.with( 'Breakable', { excludes = { '_break', true } })]],
+           "^[^:]+:%d+: bad argument #2 to with%-excludes %(string expected%)")
 

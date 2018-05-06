@@ -9,7 +9,7 @@ local ipairs = ipairs
 local require = require
 local setmetatable = setmetatable
 local _G = _G
-local table = table
+local table = require 'table'
 
 local basic_type = type
 local checktype = Coat.checktype

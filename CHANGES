@@ -1,5 +1,19 @@
 Revision history for lua-Coat
 
+0.8.2  Sun Mar 28 11:30:00 2010
+	+ add bind & inject for Dependency Injection (request from O. Albiez)
+	+ add memoize
+	+ hierarchy in subtype naming
+	+ make install
+
+0.8.1  Tue Mar  2 10:30:00 2010
+	+ add abstract class
+	+ allows userdata in the Coat type hierarchy (isa & does)
+	+ add Coat.file : the standard userdata 'file' integrates the Coat type hierarchy
+	+ coat2dot : add options --no-attr, --no-meta & --no-meth
+	+ enforce the Liskov Substitution Principle
+	+ add attribute reset (read-only means writable when nil)
+
 0.8.0  Wed Jan 20 21:30:00 2010
 	+ refactor with a more luaesque syntax (access to attribute)
 		NOT COMPATIBLE with previous versions

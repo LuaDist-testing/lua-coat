@@ -29,7 +29,7 @@ has.force = { '+', default = 5 }
 
 require 'Test.More'
 
-plan(28)
+plan(29)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 007.png", 'w')
@@ -71,4 +71,7 @@ ok( Coat.Meta.Class.has( General, 'force' ) )
 is( general.force, 5 )
 ok( general:walk() )
 ok( general:attack() )
+
+error_like([[man = Person.new{ name = 'John' }; man:isa {}]],
+           "^[^:]+:%d+: bad argument #2 to isa %(string or Object/Class expected%)")
 

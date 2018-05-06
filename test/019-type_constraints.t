@@ -11,29 +11,29 @@ subtype.Natural = {
     message = "%d is not a Natural number",
 }
 
-subtype.Month = {
+subtype.MyApp.Month = {
     as = 'Natural',
     where = function (n) return n <= 12 end,
     message = "%d is not a month"
 }
 
-subtype.WinterMonth = {
-    as = 'Month',
+subtype.MyApp.MyMod.WinterMonth = {
+    as = 'MyApp.Month',
     where = function (n) return n >= 10 end,
     message = "%d is not a month of winter"
 }
 
-enum.Colour = { 'Red', 'Green', 'Blue' }
+enum.MyApp.Colour = { 'Red', 'Green', 'Blue' }
 
 has.n = { is = 'rw', isa = 'Natural' }
 has.f = { is = 'rw', isa = 'number' }
-has.month = { is = 'rw', isa = 'Month' }
-has.winter = { is = 'rw', isa = 'WinterMonth' }
-has.col = { is = 'rw', isa = 'Colour' }
+has.month = { is = 'rw', isa = 'MyApp.Month' }
+has.winter = { is = 'rw', isa = 'MyApp.MyMod.WinterMonth' }
+has.col = { is = 'rw', isa = 'MyApp.Colour' }
 
 require 'Test.More'
 
-plan(18)
+plan(21)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 019.png", 'w')
@@ -79,7 +79,16 @@ is( factory.col, 'Green' )
 factory.col = 'Blue'
 is( factory.col, 'Blue' )
 error_like([[local factory = NumberFactory(); factory.col = 'Yellow']],
-           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'Colour'")
+           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
 error_like([[local factory = NumberFactory(); factory.col = 'Blu']],
-           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'Colour'")
+           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
+
+error_like([[enum.Alone = { 'One' }]],
+           "^[^:]+:%d+: You must have at least two values to enumerate through")
+
+error_like([[enum.Natural = { 'One', 'Two' }]],
+           "^[^:]+:%d+: Duplicate definition of type Natural")
+
+error_like([[subtype.Natural = { as = 'string', where = function (s) return s == 'natural' end }]],
+           "^[^:]+:%d+: Duplicate definition of type Natural")
 

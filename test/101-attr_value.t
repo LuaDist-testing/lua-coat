@@ -8,7 +8,7 @@ has.attr = { is = 'rw' }
 
 require 'Test.More'
 
-plan(4)
+plan(5)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 101.png", 'w')
@@ -25,3 +25,5 @@ is( foo.attr, false )
 foo.attr = nil
 is( foo.attr, nil )
 
+foo = Foo.new{ attr = function () return 42 end }
+is( foo.attr, 42 )

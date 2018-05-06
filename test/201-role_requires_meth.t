@@ -22,9 +22,13 @@ class 'BadCar'
 extends 'Car'
 with 'Repairable'
 
+class 'FakeCar'
+with 'Breakable'
+
+
 require 'Test.More'
 
-plan(7)
+plan(8)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 201.png", 'w')
@@ -46,3 +50,5 @@ error_like([[local car = BadCar.new()]],
            "^[^:]+:%d+: Role Breakable excludes role Repairable",
            "BadCar")
 
+error_like([[local car = FakeCar.new()]],
+           "^[^:]+:%d+: Role Breakable requires method _break")

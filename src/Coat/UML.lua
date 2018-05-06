@@ -35,7 +35,11 @@ local function find_type (name)
     end
 end
 
-function to_dot ()
+function to_dot (opt)
+    opt = opt or {}
+    local with_attr = not opt.no_attr
+    local with_meth = not opt.no_meth
+    local with_meta = not opt.no_meta
     local out = 'digraph {\n\n    node [shape=record];\n\n'
     for classname, class in pairs(mc.classes()) do
         out = out .. '    "' .. classname .. '"\n'
@@ -44,38 +48,40 @@ function to_dot ()
             out = out .. '&laquo;singleton&raquo;\\n'
         end
         out = out .. '\\N'
-        local first = true
-        for name, attr in mc.attributes(class) do
-            if first then
-                out = out .. '|'
-                first = false
+        if with_attr then
+            local first = true
+            for name, attr in mc.attributes(class) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name
+                if attr.isa then
+                    out = out .. ' : ' .. escape(attr.isa)
+                elseif attr.does then
+                    out = out .. ' : ' .. attr.does
+                end
+                out = out .. '\\l'
             end
-            out = out .. name
-            if attr.is then
-                out = out .. ', is ' .. attr.is
-            end
-            if attr.isa then
-                out = out .. ', isa ' .. escape(attr.isa)
-            end
-            if attr.does then
-                out = out .. ', does ' .. attr.does
-            end
-            out = out .. '\\l'
         end
-        first = true
-        for name in mc.metamethods(class) do
-            if first then
-                out = out .. '|'
-                first = false
+        if with_meth then
+            local first = true
+            if with_meta then
+                for name in mc.metamethods(class) do
+                    if first then
+                        out = out .. '|'
+                        first = false
+                    end
+                    out = out .. name .. '()\\l'
+                end
             end
-            out = out .. name .. '()\\l'
-        end
-        for name in mc.methods(class) do
-            if first then
-                out = out .. '|'
-                first = false
+            for name in mc.methods(class) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name .. '()\\l'
             end
-            out = out .. name .. '()\\l'
         end
         out = out .. '}"];\n'
         for name, attr in mc.attributes(class) do
@@ -104,31 +110,31 @@ function to_dot ()
     for rolename, role in pairs(mr.roles()) do
         out = out .. '    "' .. rolename .. '"\n'
         out = out .. '        [label="{&laquo;role&raquo;\\n\\N'
-        local first = true
-        for name, attr in mr.attributes(role) do
-            if first then
-                out = out .. '|'
-                first = false
+        if with_attr then
+            local first = true
+            for name, attr in mr.attributes(role) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name
+                if attr.isa then
+                    out = out .. ' : ' .. escape(attr.isa)
+                elseif attr.does then
+                    out = out .. ' : ' .. attr.does
+                end
+                out = out .. '\\l'
             end
-            out = out .. name
-            if attr.is then
-                out = out .. ', is ' .. attr.is
-            end
-            if attr.isa then
-                out = out .. ', isa ' .. escape(attr.isa)
-            end
-            if attr.does then
-                out = out .. ', does ' .. attr.does
-            end
-            out = out .. '\\l'
         end
-        first = true
-        for name in mr.methods(role) do
-            if first then
-                out = out .. '|'
-                first = false
+        if with_meth then
+            local first = true
+            for name in mr.methods(role) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name .. '()\\l'
             end
-            out = out .. name .. '()\\l'
         end
         out = out .. '}"];\n\n'
         for name, attr in mr.attributes(role) do
