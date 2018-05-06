@@ -59,8 +59,8 @@ is( foo.name, 'John' )
 ok( foo.bad )
 
 error_like([[local foo = English.new(); foo:bad()]],
-           "^[^:]+:%d+: Cannot delegate bad from translate %(_bad_%)")
+           "Cannot delegate bad from translate %(_bad_%)")
 
 error_like([[local foo = English.new(); foo:_bad()]],
-           "^[^:]+:%d+: Cannot delegate _bad from translate %(_bad%)")
+           "Cannot delegate _bad from translate %(_bad%)")
 

@@ -3,6 +3,7 @@ COPYRIGHT
 MANIFEST
 Makefile
 README
+doc/0001-implement-setfenv-deprecated-with-Lua-5.2.0-work3.patch
 doc/Point3D.png
 doc/coat.html
 doc/index.html

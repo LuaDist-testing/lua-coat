@@ -36,20 +36,20 @@ car:_break()
 is( _G.seen, "I broke" )
 
 error_like([[Car.has.turbo1 = { is = 'rw', handles = 'Unknown' }]],
-           "^[^:]+:%d+: module 'Unknown' not found")
+           "module 'Unknown' not found")
 
 error_like([[Car.has.turbo2 = { is = 'rw', handles = 'Engine' }]],
-           "^[^:]+:%d+: The handles option requires a table or a Role")
+           "The handles option requires a table or a Role")
 
 error_like([[Car.has.turbo3 = { is = 'rw', does = 'Boostable', handles = 'Breakable' }]],
-           "^[^:]+:%d+: The handles option requires a does option with the same role")
+           "The handles option requires a does option with the same role")
 
 error_like([[Car.has.turbo4 = { is = 'rw', does = 'Breakable', handles = 'Breakable' }]],
-           "^[^:]+:%d+: Duplicate definition of method _break")
+           "Duplicate definition of method _break")
 
 class 'Turbo'
 error_like([[Turbo.with 'Unknown']],
-           "^[^:]+:%d+: module 'Unknown' not found")
+           "module 'Unknown' not found")
 
 error_like([[Turbo.with 'Engine']],
-           "^[^:]+:%d+: bad argument #1 to with %(string or Role expected%)")
+           "bad argument #1 to with %(string or Role expected%)")

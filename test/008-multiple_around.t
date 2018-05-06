@@ -61,5 +61,5 @@ eq_array( _G.seen, {
 } )
 
 error_like([[function Child.around:_orig_ () end]],
-           "^[^:]+:%d+: Cannot around non%-existent method _orig_ in class Child")
+           "Cannot around non%-existent method _orig_ in class Child")
 

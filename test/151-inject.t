@@ -55,18 +55,18 @@ ok( foo.logger:isa 'Logger' )
 ok( foo.logger:does 'Log' )
 
 error_like([[ServiceImpl1.bind.Log = {}]],
-           "^[^:]+:%d+: bad argument #2 to bind %(function or string or Class expected%)")
+           "bad argument #2 to bind %(function or string or Class expected%)")
 
 error_like([[ServiceImpl1.bind.Log = 'Unknown']],
-           "^[^:]+:%d+: module 'Unknown' not found")
+           "module 'Unknown' not found")
 
 error_like([[ServiceImpl1.bind.Log = 'Logger']],
-           "^[^:]+:%d+: Duplicate binding of Log")
+           "Duplicate binding of Log")
 
 class 'ServiceImpl4'
 extends 'Service'
 error_like([[local foo = ServiceImpl4(); local logger = foo.logger]],
-           "^[^:]+:%d+: No binding found for Log in class ServiceImpl4")
+           "No binding found for Log in class ServiceImpl4")
 
 error_like([[Service.has.tracer = { is = 'ro', isa = 'Tracer', inject = true }]],
-           "^[^:]+:%d+: The inject option requires a does option")
+           "The inject option requires a does option")

@@ -34,10 +34,10 @@ ok( foo:isa 'Record', "coercion" )
 is( foo.timestamp, '01/01/1970 00:00:00' )
 
 error_like([[foo = Record{ timestamp = true }]],
-           "^[^:]+:%d+: Invalid type for attribute 'timestamp' %(got boolean, expected string%)",
+           "Invalid type for attribute 'timestamp' %(got boolean, expected string%)",
            "no coercion")
 
 Record.has.field = { is = 'ro', isa = 'Unknown', required = true, coerce = true }
 error_like([[foo = Record{ timestamp = 0, field = '' }]],
-           "^[^:]+:%d+: Coercion is not available for type Unknown",
+           "Coercion is not available for type Unknown",
            "no mapping")

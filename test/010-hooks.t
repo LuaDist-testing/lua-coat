@@ -69,8 +69,8 @@ eq_array( _G.list, {
 } )
 
 error_like([[function Child.after:push_elem () end]],
-           "^[^:]+:%d+: Cannot after non%-existent method push_elem in class Child")
+           "Cannot after non%-existent method push_elem in class Child")
 
 error_like([[function Child.before:push_elem () end]],
-           "^[^:]+:%d+: Cannot before non%-existent method push_elem in class Child")
+           "Cannot before non%-existent method push_elem in class Child")
 

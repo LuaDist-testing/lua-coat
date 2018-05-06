@@ -8,7 +8,7 @@
   <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
   <meta http-equiv="Language" content="en"/>
   <meta http-equiv="Description" content="Module Coat"/>
-  <meta http-equiv="Keywords" content="lua, coat, class, after, around, before, bind, can, does, extends, has, instance, isa, overload, override, method, new, singleton, type, with"/>
+  <meta http-equiv="Keywords" content="lua, coat, class, after, around, before, bind, can, does, dump, extends, has, instance, isa, overload, override, method, new, singleton, type, with"/>
 </head>
 
 <body>
@@ -133,6 +133,10 @@
 <h4><code>does( obj, r )</code> or <code>obj:does( r )</code></h4>
 
 <p>Checks if a object consumes <code>r</code> which is a role or rolename.</p>
+
+<h4><code>dump( obj [, label] )</code> or <code>obj:dump( [label] )</code></h4>
+
+<p>Dumps the object. The default value of <code>label</code> is <code>"obj"</code>.</p>
 
 <h4><code>extends( class [, ...] )</code></h4>
 

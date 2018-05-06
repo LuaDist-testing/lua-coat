@@ -37,5 +37,5 @@ car:_break()
 is( _G.seen, "I broke" )
 
 error_like([[local engine = Engine.new(); engine:does {}]],
-           "^[^:]+:%d+: bad argument #2 to does %(string or Role expected%)")
+           "bad argument #2 to does %(string or Role expected%)")
 

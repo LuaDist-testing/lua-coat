@@ -45,12 +45,12 @@ foo.name = 'John'
 is( foo.name, 'John' )
 is( foo.lazy_classname, 'Parent' )
 error_like([[local foo = Parent.new(); foo.lazy_classname = 'Object']],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(lazy_classname%)")
+           "Cannot set a read%-only attribute %(lazy_classname%)")
 is( foo.type_constrained, 5.5 )
 foo.type_constrained = 10.5
 is( foo.type_constrained, 10.5 )
 error_like([[local foo = Parent.new(); foo.type_constrained = -0.5]],
-           "^[^:]+:%d+: Value for attribute 'type_constrained' does not validate type constraint 'Positive'")
+           "Value for attribute 'type_constrained' does not validate type constraint 'Positive'")
 
 foo = Child.new()
 ok( foo:isa 'Child', "Child" )
@@ -60,10 +60,10 @@ foo.name = 'John'
 is( foo.name, 'John' )
 is( foo.lazy_classname, 'Child' )
 error_like([[local foo = Child.new(); foo.lazy_classname = 'Object']],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(lazy_classname%)")
+           "Cannot set a read%-only attribute %(lazy_classname%)")
 is( foo.type_constrained, 7.5 )
 foo.type_constrained = 9.5
 is( foo.type_constrained, 9.5 )
 error_like([[local foo = Child.new(); foo.type_constrained = -0.5]],
-           "^[^:]+:%d+: Value for attribute 'type_constrained' does not validate type constraint 'Positive'")
+           "Value for attribute 'type_constrained' does not validate type constraint 'Positive'")
 

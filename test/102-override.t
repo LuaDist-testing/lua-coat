@@ -37,18 +37,18 @@ is( c:bar(), 'BAR' )
 is( c:baz(), 'baz' )
 
 error_like([[Child.override.biz = function (self) return 'BIZ' end]],
-           "^[^:]+:%d+: Cannot override non%-existent method biz in class Child",
+           "Cannot override non%-existent method biz in class Child",
            "bad 1")
 
 error_like([[Child.method.baz = function (self) return 'baz' end]],
-           "^[^:]+:%d+: Duplicate definition of method baz",
+           "Duplicate definition of method baz",
            "bad 2")
 
 error_like([[Parent.method.baz = function (self) return 'baz' end]],
-           "^[^:]+:%d+: Duplicate definition of method baz",
+           "Duplicate definition of method baz",
            "bad 3")
 
 error_like([[Child.method.foo = function () end]],
-           "^[^:]+:%d+: Overwrite definition of attribute foo",
+           "Overwrite definition of attribute foo",
            "bad 4")
 

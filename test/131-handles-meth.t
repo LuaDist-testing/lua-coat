@@ -34,4 +34,4 @@ function Car.method:run ()
     return true
 end
 error_like([[Car.has.turbo = { is = 'rw', handles = { 'run' } }]],
-           "^[^:]+:%d+: Duplicate definition of method run")
+           "Duplicate definition of method run")

@@ -5,7 +5,7 @@
 
 require 'Coat'
 
-local ipairs = ipairs
+local pairs = pairs
 local require = require
 local setmetatable = setmetatable
 local _G = _G
@@ -32,14 +32,14 @@ function method (role, name, func)
 end
 
 function requires (role, ...)
-    for i, meth in ipairs{...} do
+    for i, meth in pairs{...} do
         checktype('requires', i, meth, 'string')
         table.insert(role._REQ, meth)
     end
 end
 
 function excludes (role, ...)
-    for i, r in ipairs{...} do
+    for i, r in pairs{...} do
         checktype('excludes', i, r, 'string')
         table.insert(role._EXCL, r)
     end

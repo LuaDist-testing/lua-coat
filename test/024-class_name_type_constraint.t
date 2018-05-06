@@ -17,7 +17,7 @@ has.x = { is = 'rw', isa = 'number' }
 
 require 'Test.More'
 
-plan(6)
+plan(7)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 024.png", 'w')
@@ -33,10 +33,17 @@ a.b = b
 is( a.b.x, 2 )
 a.b = a
 is( a.b.x, 3 ) -- coerced
+is( a:dump(), [[
+obj = MyApp.A {
+  b = MyApp.B {
+    x = 3,
+  },
+  x = 1,
+}]], "dump" )
 
 error_like([[local a = MyApp.A{ x = 1 }; a.c = MyApp.A.new()]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got MyApp.A, expected MyApp.C%)")
+           "Invalid type for attribute 'c' %(got MyApp.A, expected MyApp.C%)")
 
 error_like([[local a = MyApp.A{ x = 1 }; a.c = "text"]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got string, expected MyApp.C%)")
+           "Invalid type for attribute 'c' %(got string, expected MyApp.C%)")
 

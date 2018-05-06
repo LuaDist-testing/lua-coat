@@ -39,7 +39,7 @@ is( foo.a:type(), 'B' )
 foo.a = C()
 is( foo.a:type(), 'C' )
 error_like([[local foo = B(); foo.b = A()]],
-           "^[^:]+:%d+: Invalid type for attribute 'b' %(got A, expected B%)")
+           "Invalid type for attribute 'b' %(got A, expected B%)")
 foo.b = B()
 is( foo.b:type(), 'B' )
 foo.b = C()
@@ -53,15 +53,15 @@ is( foo.a:type(), 'B' )
 foo.a = C()
 is( foo.a:type(), 'C' )
 error_like([[local foo = C(); foo.b = A()]],
-           "^[^:]+:%d+: Invalid type for attribute 'b' %(got A, expected B%)")
+           "Invalid type for attribute 'b' %(got A, expected B%)")
 foo.b = B()
 is( foo.b:type(), 'B' )
 foo.b = C()
 is( foo.b:type(), 'C' )
 error_like([[local foo = C(); foo.c = A()]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got A, expected C%)")
+           "Invalid type for attribute 'c' %(got A, expected C%)")
 error_like([[local foo = C(); foo.c = B()]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got B, expected C%)")
+           "Invalid type for attribute 'c' %(got B, expected C%)")
 foo.c = C()
 is( foo.c:type(), 'C' )
 

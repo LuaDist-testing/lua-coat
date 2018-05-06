@@ -45,32 +45,32 @@ factory = NumberFactory()
 factory.n = 24
 is( factory.n , 24, "Natural" )
 error_like([[local factory = NumberFactory(); factory.n = "text"]],
-           "^[^:]+:%d+: Invalid type for attribute 'n' %(got string, expected number%)")
+           "Invalid type for attribute 'n' %(got string, expected number%)")
 error_like([[local factory = NumberFactory(); factory.n = 0]],
-           "^[^:]+:%d+: 0 is not a Natural number")
+           "0 is not a Natural number")
 
 factory.f = 2.0
 is( factory.f, 2.0, "Float" )
 error_like([[local factory = NumberFactory(); factory.f = "text"]],
-           "^[^:]+:%d+: Invalid type for attribute 'f' %(got string, expected number%)")
+           "Invalid type for attribute 'f' %(got string, expected number%)")
 
 factory.month = 1
 is( factory.month, 1, "Month" )
 factory.month = 12
 is( factory.month, 12 )
 error_like([[local factory = NumberFactory(); factory.month = 0]],
-           "^[^:]+:%d+: 0 is not a Natural number")
+           "0 is not a Natural number")
 error_like([[local factory = NumberFactory(); factory.month = 14]],
-           "^[^:]+:%d+: 14 is not a month")
+           "14 is not a month")
 
 factory.winter = 12
 is( factory.winter, 12, "WinterMonth" )
 error_like([[local factory = NumberFactory(); factory.winter = 0]],
-           "^[^:]+:%d+: 0 is not a Natural number")
+           "0 is not a Natural number")
 error_like([[local factory = NumberFactory(); factory.winter = 14]],
-           "^[^:]+:%d+: 14 is not a month")
+           "14 is not a month")
 error_like([[local factory = NumberFactory(); factory.winter = 8]],
-           "^[^:]+:%d+: 8 is not a month of winter")
+           "8 is not a month of winter")
 
 factory.col = 'Red'
 is( factory.col, 'Red', "Colour" )
@@ -79,16 +79,16 @@ is( factory.col, 'Green' )
 factory.col = 'Blue'
 is( factory.col, 'Blue' )
 error_like([[local factory = NumberFactory(); factory.col = 'Yellow']],
-           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
+           "Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
 error_like([[local factory = NumberFactory(); factory.col = 'Blu']],
-           "^[^:]+:%d+: Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
+           "Value for attribute 'col' does not validate type constraint 'MyApp.Colour'")
 
 error_like([[enum.Alone = { 'One' }]],
-           "^[^:]+:%d+: You must have at least two values to enumerate through")
+           "You must have at least two values to enumerate through")
 
 error_like([[enum.Natural = { 'One', 'Two' }]],
-           "^[^:]+:%d+: Duplicate definition of type Natural")
+           "Duplicate definition of type Natural")
 
 error_like([[subtype.Natural = { as = 'string', where = function (s) return s == 'natural' end }]],
-           "^[^:]+:%d+: Duplicate definition of type Natural")
+           "Duplicate definition of type Natural")
 

@@ -62,14 +62,14 @@ is( bal.field_from_biz, nil )
 is( bal.field_from_foo_int, 1 )
 
 error_like([[Baz.has.no_field = { '+', default = 42 }]],
-           "^[^:]+:%d+: Cannot overload unknown attribute no_field")
+           "Cannot overload unknown attribute no_field")
 
 error_like([[Baz.has.field_from_bar = { is = 'rw' }]],
-           "^[^:]+:%d+: Duplicate definition of attribute field_from_bar")
+           "Duplicate definition of attribute field_from_bar")
 
 function Baz.method:callIt ()
     return true
 end
 error_like([[Baz.has.callIt = { is = 'rw' }]],
-           "^[^:]+:%d+: Overwrite definition of method callIt")
+           "Overwrite definition of method callIt")
 

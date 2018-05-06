@@ -34,14 +34,14 @@ foo.subobject = Bar.new()
 ok( foo.subobject:isa 'Bar' )
 
 error_like([[local foo = Foo.new(); foo.x = "text"]],
-           "^[^:]+:%d+: Invalid type for attribute 'x' %(got string, expected number%)")
+           "Invalid type for attribute 'x' %(got string, expected number%)")
 
 error_like([[local foo = Foo.new(); foo.s = 2]],
-           "^[^:]+:%d+: Invalid type for attribute 's' %(got number, expected string%)")
+           "Invalid type for attribute 's' %(got number, expected string%)")
 
 error_like([[local foo = Foo.new(); foo.c = 2]],
-           "^[^:]+:%d+: Invalid type for attribute 'c' %(got number, expected function%)")
+           "Invalid type for attribute 'c' %(got number, expected function%)")
 
 error_like([[local foo = Foo.new(); foo.subobject = Baz.new()]],
-           "^[^:]+:%d+: Invalid type for attribute 'subobject' %(got Baz, expected Bar%)")
+           "Invalid type for attribute 'subobject' %(got Baz, expected Bar%)")
 

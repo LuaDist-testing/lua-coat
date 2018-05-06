@@ -30,6 +30,6 @@ is( foo.bar, 33 )
 is( foo.baz, 33 )
 
 error_like([[Foo.has.badtrig = { isa = 'number', trigger = 2 }]],
-           "^[^:]+:%d+: The trigger option requires a function",
+           "The trigger option requires a function",
            "bad trigger")
 

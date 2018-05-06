@@ -32,7 +32,7 @@ is( a._VALUES.y, 2 )
 is( a.x, 2 )
 
 error_like([[A.has.z = { isa = 'number', is = 'rw', lazy = true }]],
-           "^[^:]+:%d+: The lazy option implies the builder or default option",
+           "The lazy option implies the builder or default option",
            "bad")
 
 foo = Foo.new{ dir = '/tmp', name = 'file' }

@@ -28,7 +28,7 @@ is( child.bar, 1 )
 is( child.baz, 2 )
 
 error_like([[local parent = Parent.new()]],
-           "^[^:]+:%d+: Cannot instanciate an abstract class Parent")
+           "Cannot instanciate an abstract class Parent")
 
 error_like([[local parent = Parent()]],
-           "^[^:]+:%d+: Cannot instanciate an abstract class Parent")
+           "Cannot instanciate an abstract class Parent")

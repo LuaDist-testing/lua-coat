@@ -38,11 +38,11 @@ is( car.engine, 'SpecialEngine' )
 
 SpecialCar.has.turbo = { is = 'ro', builder = '_build_turbo' }
 error_like([[local car = SpecialCar.new(); local turbo = car.turbo]],
-           "^[^:]+:%d+: method _build_turbo not found in SpecialCar")
+           "method _build_turbo not found in SpecialCar")
 
 error_like([[Car.has.turbo = { is = 'ro', builder = function () return true end }]],
-           "^[^:]+:%d+: The builder option requires a string %(method name%)")
+           "The builder option requires a string %(method name%)")
 
 error_like([[Car.has.turbo = { is = 'ro', builder = '_build_turbo', default = true }]],
-           "^[^:]+:%d+: The options default and builder are not compatible")
+           "The options default and builder are not compatible")
 

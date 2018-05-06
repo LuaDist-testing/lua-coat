@@ -4,8 +4,6 @@
 
 require 'Coat'
 
-local error = error
-local ipairs = ipairs
 local setmetatable = setmetatable
 local pairs = pairs
 local _G = _G
@@ -13,6 +11,7 @@ local table = require 'table'
 
 local checktype = Coat.checktype
 local does = Coat.does
+local error = Coat.error
 local isa = Coat.isa
 
 module 'Coat.Types'
@@ -55,8 +54,8 @@ function find_type_constraint (name)
                         end
         else
             tc.validator = function (val)
-                            for _, v in ipairs(val) do
-                                if not check_type(v, typev) then
+                            for i = 1, #val do
+                                if not check_type(val[i], typev) then
                                     return false
                                 end
                             end
@@ -111,7 +110,8 @@ function enum (name, t)
         error "You must have at least two values to enumerate through"
     end
     local hash = {}
-    for i, v in ipairs(t) do
+    for i = 1, #t do
+        local v = t[i]
         checktype('enum', 1+i, v, 'string')
         hash[v] = true
     end

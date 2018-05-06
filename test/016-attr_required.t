@@ -37,6 +37,6 @@ is( foo.baz, 100 )
 is( foo.boo, 50 )
 
 error_like([[foo = Foo.new()]],
-           "^[^:]+:%d+: Attribute 'bar' is required",
+           "Attribute 'bar' is required",
            "Foo4")
 

@@ -1,5 +1,10 @@
 Revision history for lua-Coat
 
+0.8.3  Fri May 28 20:30:00 2010
+	+ customize error (now gives a caller position)
+	+ add method dump
+	+ add a patch for Lua 5.2.0 work3 (setfenv)
+
 0.8.2  Sun Mar 28 11:30:00 2010
 	+ add bind & inject for Dependency Injection (request from O. Albiez)
 	+ add memoize

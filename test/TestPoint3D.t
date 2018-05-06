@@ -54,6 +54,6 @@ is( a.z, 3 )
 is( tostring(a), "(1, 2, 3)", "stringify" )
 
 error_like([[a = Point3D{x = "x", y = "y", z = "z"}]],
-           "^[^:]+:%d+: Invalid type for attribute",
+           "Invalid type for attribute",
            "new (bad)")
 

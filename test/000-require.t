@@ -2,7 +2,7 @@
 
 require 'Test.More'
 
-plan(9)
+plan(10)
 
 if not require_ok 'Coat' then
     BAIL_OUT "no lib"
@@ -18,4 +18,10 @@ type_ok( m._VERSION, 'string', "_VERSION" )
 like( m._VERSION, '^%d%.%d%.%d$' )
 
 is( Coat.math, nil, "check ns pollution" )
+
+function err ()
+    Coat.error "MSG" -- line 23
+end
+local r, msg = pcall(err)
+like( msg, "000%-require%.t:23: MSG", "error" )
 

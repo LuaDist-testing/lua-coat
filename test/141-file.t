@@ -39,6 +39,6 @@ ok( bar:isa 'Bar', "isa" )
 f:close()
 is( io.type(f), 'closed file' )
 error_like(function () baz = Bar.new{ log = f } end,
-           "^[^:]+:%d+: Value for attribute 'log' does not validate type constraint 'OpenedFile'")
+           "Value for attribute 'log' does not validate type constraint 'OpenedFile'")
 
 

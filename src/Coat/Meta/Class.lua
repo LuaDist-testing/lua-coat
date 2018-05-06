@@ -29,6 +29,7 @@ local reserved = {
     before = true,
     can = true,
     does = true,
+    dump = true,
     extends = true,
     has = true,
     instance = true,

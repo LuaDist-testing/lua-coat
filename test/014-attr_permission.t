@@ -30,13 +30,13 @@ foo.reset = 12
 is( foo.reset, 12 )
 
 error_like([[local foo = Foo.new{ read = 4, write = 5, reset = 7 }; foo.read = 5]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(read%)")
+           "Cannot set a read%-only attribute %(read%)")
 
 error_like([[local foo = Foo.new{ read = 4, write = 5, reset = 7 }; foo.read = nil]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(read%)")
+           "Cannot set a read%-only attribute %(read%)")
 
 error_like([[local foo = Foo.new{ read = 4, write = 5, reset = 7 }; foo.reset = 12]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(reset%)")
+           "Cannot set a read%-only attribute %(reset%)")
 
 foo = Foo.new()
 is( foo.read, nil, "Foo (default)" )
@@ -53,19 +53,19 @@ foo.reset = 12
 is( foo.reset, 12 )
 
 error_like([[local foo = Foo.new(); foo.read = 2; foo.read = 5]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(read%)")
+           "Cannot set a read%-only attribute %(read%)")
 
 error_like([[local foo = Foo.new(); foo.read = 2; foo.read = nil]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(read%)")
+           "Cannot set a read%-only attribute %(read%)")
 
 error_like([[local foo = Foo.new(); foo.reset = 7; foo.reset = 12]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(reset%)")
+           "Cannot set a read%-only attribute %(reset%)")
 
 error_like([[local foo = Foo.new(); foo.bad = 5]],
-           "^[^:]+:%d+: Cannot set 'bad' %(unknown%)")
+           "Cannot set 'bad' %(unknown%)")
 
 is( foo.bad, nil )
 
 error_like([[Foo.has.field = { is = 'ro', reset = true, required = true }]],
-           "^[^:]+:%d+: The reset option is incompatible with required option")
+           "The reset option is incompatible with required option")
 

@@ -47,14 +47,14 @@ is( bar.y, 42 )
 is( bar.z, 42 )
 
 error_like([[baz = Baz()]],
-           "^[^:]+:%d+: Attribute 'x' is required",
+           "Attribute 'x' is required",
            "required")
 
 error_like([[baz = Baz{ x = 0, y = 'text' }]],
-           "^[^:]+:%d+: Invalid type for attribute 'y' %(got string, expected number%)",
+           "Invalid type for attribute 'y' %(got string, expected number%)",
            "isa")
 
 error_like([[baz = Baz{ x = 0 }; baz.z = 0]],
-           "^[^:]+:%d+: Cannot set a read%-only attribute %(z%)",
+           "Cannot set a read%-only attribute %(z%)",
            "ro")
 

@@ -46,5 +46,5 @@ is( checking_account.balance, 100 )
 checking_account:withdraw(50)
 is( checking_account.balance, 50 )
 error_like([[checking_account:withdraw(200)]],
-           "^[^:]+:%d+: Account overdrawn")
+           "Account overdrawn")
 

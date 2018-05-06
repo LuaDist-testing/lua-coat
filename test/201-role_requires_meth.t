@@ -47,8 +47,8 @@ ok( car:does 'Breakable' )
 is( car:_break(), "I broke" )
 
 error_like([[local car = BadCar.new()]],
-           "^[^:]+:%d+: Role Breakable excludes role Repairable",
+           "Role Breakable excludes role Repairable",
            "BadCar")
 
 error_like([[local car = FakeCar.new()]],
-           "^[^:]+:%d+: Role Breakable requires method _break")
+           "Role Breakable requires method _break")

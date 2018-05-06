@@ -73,5 +73,5 @@ ok( general:walk() )
 ok( general:attack() )
 
 error_like([[man = Person.new{ name = 'John' }; man:isa {}]],
-           "^[^:]+:%d+: bad argument #2 to isa %(string or Object/Class expected%)")
+           "bad argument #2 to isa %(string or Object/Class expected%)")
 

@@ -49,10 +49,10 @@ is( a.x, 1 )
 is( a.y, 2 )
 is( tostring(a), "(1, 2)" )
 error_like([[a.x = "number expected"]],
-           "^[^:]+:%d+: Invalid type for attribute",
+           "Invalid type for attribute",
            "check type")
 
 error_like([[a = Point{x = "x", y = "y"}]],
-           "^[^:]+:%d+: Invalid type for attribute",
+           "Invalid type for attribute",
            "new (bad)")
 

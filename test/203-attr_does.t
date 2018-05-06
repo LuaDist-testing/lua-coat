@@ -36,7 +36,7 @@ is( car.engine.is_broken, nil )
 car.engine:_break()
 ok( car.engine.is_broken )
 error_like([[local car = Car.new{ engine = Engine.new() }; car.engine = Car.new()]],
-           "^[^:]+:%d+: Value for attribute 'engine' does not consume role 'Breakable'")
+           "Value for attribute 'engine' does not consume role 'Breakable'")
 car.engine = SpecialEngine.new()
 ok( car.engine:does 'Breakable' )
 
