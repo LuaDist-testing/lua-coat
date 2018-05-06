@@ -1,0 +1,21 @@
+Revision history for lua-Coat
+
+0.5.0  Mon Aug 24 15:30:00 2009
+	+ full refactor with a more luaesque syntax
+		NOT COMPATIBLE with previous versions
+
+0.3.0  Mon Aug 17 17:30:00 2009
+	+ handle submodule hierarchy
+
+0.2.1  Sun Aug 16 14:30:00 2009
+	+ remove package.seeall (avoid namespace pollution),
+		thanks to David Manura
+	+ fix type for readonly table and other not Coat table,
+		thanks to David Manura
+
+0.2.0  Fri Aug 14 16:30:00 2009
+	+ add Roles
+	+ add attributes : builder, lazy_build, reader & writer
+
+0.1.0  Thu Aug  6 10:30:00 2009
+	First release (only Perl5 Coat features)
