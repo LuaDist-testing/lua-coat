@@ -5,8 +5,8 @@ lua-Coat : Yet Another Lua Object-Oriented Model
 Introduction
 ------------
 
-lua-Coat is a Lua 5.1 port of Coat (http://www.sukria.net/perl/coat/),
-a Perl module which mimics Moose (http://www.iinteractive.com/moose/),
+lua-Coat is a Lua 5.1 port of [Coat](http://www.sukria.net/perl/coat/),
+a Perl module which mimics [Moose](http://www.iinteractive.com/moose/),
 an object system for Perl5 which borrows features from Perl6,
 CLOS (LISP), Smalltalk and many other languages.
 
@@ -17,8 +17,8 @@ powerful and flexible part of lua-Coat.
 Links
 -----
 
-The homepage is at http://lua-coat.luaforge.net/,
-and the sources are hosted at http://github.com/fperrad/lua-Coat/.
+The homepage is at [http://fperrad.github.com/lua-Coat](http://fperrad.github.com/lua-Coat),
+and the sources are hosted at [http://github.com/fperrad/lua-Coat](http://github.com/fperrad/lua-Coat).
 
 Copyright and License
 ---------------------

@@ -1,5 +1,5 @@
 --
--- lua-Coat : <http://lua-coat.luaforge.net/>
+-- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
 require 'Coat'

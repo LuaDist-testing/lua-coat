@@ -1,6 +1,6 @@
 
 --
--- lua-Coat : <http://lua-coat.luaforge.net/>
+-- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
 local basic_type = type
@@ -24,20 +24,14 @@ end
 
 local reserved = {
     BUILD = true,
-    after = true,
-    around = true,
-    before = true,
     can = true,
     does = true,
     dump = true,
     extends = true,
-    has = true,
     instance = true,
     isa = true,
-    method = true,
+    memoize = true,
     new = true,
-    overload = true,
-    override = true,
     type = true,
     with = true,
     _INIT = true,

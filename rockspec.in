@@ -13,7 +13,7 @@ description = {
         an object system for Perl5 which borrows features from Perl6,
         CLOS (LISP), Smalltalk and many other languages.
     ]],
-    homepage = 'http://lua-coat.luaforge.net/',
+    homepage = 'http://fperrad.github.com/lua-Coat/',
     maintainer = 'Francois Perrad',
     license = 'MIT/X11'
 }
@@ -22,7 +22,7 @@ dependencies = {
     'lua-testmore >= 0.2.1',
 }
 build = {
-    type = 'builtin',
+    type = 'none',
     modules = {
         ['Coat']                = 'src/Coat.lua',
         ['Coat.Meta.Class']     = 'src/Coat/Meta/Class.lua',

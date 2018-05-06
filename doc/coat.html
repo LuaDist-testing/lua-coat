@@ -79,6 +79,7 @@
       <ul>
         <li><a href="inject.html">Dependency Injection</a></li>
         <li><a href="memoize.html">Memoization</a></li>
+        <li><a href="mock.html">Mock</a></li>
       </ul>
     </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
@@ -188,6 +189,10 @@ An item <code>'+'</code> allows overriding.</p>
 
 <p>Allows memoization for a method.</p>
 
+<h4><code>mock( obj, methname, func )</code> or <code>obj:mock( methname, func )</code></h4>
+
+<p>Overrides a method of an object.</p>
+
 <h4><code>new( args )</code></h4>
 
 <p>Instanciates a object.</p>
@@ -197,6 +202,10 @@ An item <code>'+'</code> allows overriding.</p>
 <h4><code>type( obj )</code> or <code>obj:type()</code></h4>
 
 <p>Returns the type of <code>obj</code>.</p>
+
+<h4><code>unmock( obj, methname )</code> or <code>obj:unmock( methname )</code></h4>
+
+<p>Restore the initial method of a mocked object.</p>
 
 <h4><code>with( role [, alias-excludes ] [, role, ... ] )</code></h4>
 

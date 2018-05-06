@@ -1,9 +1,10 @@
 
 --
--- lua-Coat : <http://lua-coat.luaforge.net/>
+-- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
 local pairs = pairs
+local table = require 'table'
 
 local mc = require 'Coat.Meta.Class'
 local mr = require 'Coat.Meta.Role'
@@ -35,6 +36,23 @@ local function find_type (name)
     end
 end
 
+local function sort (...)
+    local k, v = {}, {}
+    for name, val in ... do
+        k[#k+1] = name
+        v[name] = val
+    end
+    table.sort(k, function (a, b)
+                      return a:gsub('^_', '') < b:gsub('^_', '')
+                  end)
+    local i = 0
+    return  function ()
+                i = i + 1
+                local name = k[i]
+                return name, v[name]
+            end
+end
+
 function to_dot (opt)
     opt = opt or {}
     local with_attr = not opt.no_attr
@@ -50,7 +68,7 @@ function to_dot (opt)
         out = out .. '\\N'
         if with_attr then
             local first = true
-            for name, attr in mc.attributes(class) do
+            for name, attr in sort(mc.attributes(class)) do
                 if first then
                     out = out .. '|'
                     first = false
@@ -67,7 +85,7 @@ function to_dot (opt)
         if with_meth then
             local first = true
             if with_meta then
-                for name in mc.metamethods(class) do
+                for name in sort(mc.metamethods(class)) do
                     if first then
                         out = out .. '|'
                         first = false
@@ -75,7 +93,7 @@ function to_dot (opt)
                     out = out .. name .. '()\\l'
                 end
             end
-            for name in mc.methods(class) do
+            for name in sort(mc.methods(class)) do
                 if first then
                     out = out .. '|'
                     first = false
@@ -112,7 +130,7 @@ function to_dot (opt)
         out = out .. '        [label="{&laquo;role&raquo;\\n\\N'
         if with_attr then
             local first = true
-            for name, attr in mr.attributes(role) do
+            for name, attr in sort(mr.attributes(role)) do
                 if first then
                     out = out .. '|'
                     first = false
@@ -128,7 +146,7 @@ function to_dot (opt)
         end
         if with_meth then
             local first = true
-            for name in mr.methods(role) do
+            for name in sort(mr.methods(role)) do
                 if first then
                     out = out .. '|'
                     first = false

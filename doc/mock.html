@@ -2,13 +2,13 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Module Coat.Types</title>
+  <title>Test with Mock</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
   <meta http-equiv="Language" content="en"/>
-  <meta http-equiv="Description" content="Module Coat.Types"/>
-  <meta http-equiv="Keywords" content="lua, coat, types, coerce, enum, subtype"/>
+  <meta http-equiv="Description" content="Test with Mock"/>
+  <meta http-equiv="Keywords" content="lua, coat, test, mock"/>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 <div id="main">
 
 <div id="navigation">
-<h1>Coat.Types</h1>
+<h1>Mock</h1>
   <ul>
     <li><a href="index.html">Home</a>
       <ul>
@@ -53,7 +53,7 @@
         <li><a href="role.html#examples">Examples</a></li>
       </ul>
     </li>
-    <li><strong>module <code>Coat.Types</code></strong>
+    <li><a href="types.html">module <code>Coat.Types</code></a>
       <ul>
         <li><a href="types.html#reference">Reference</a></li>
         <li><a href="types.html#examples">Examples</a></li>
@@ -79,7 +79,7 @@
       <ul>
         <li><a href="inject.html">Dependency Injection</a></li>
         <li><a href="memoize.html">Memoization</a></li>
-        <li><a href="mock.html">Mock</a></li>
+        <li><strong>Mock</strong></li>
       </ul>
     </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
@@ -93,97 +93,65 @@
 
 <div id="content">
 
-<h2><a name="reference"></a>References</h2>
+<h2><a name="object"></a>Mock Object</h2>
 
-<p>This module provides the ability to create constrained type
-and parametrized type which are used in attribute definition.</p>
-
-<p>All functions are stored in a global space.</p>
-
-<p>The option <code>isa</code> handles :</p>
-
-<ul>
-  <li>basic types from Lua</li>
-  <li>Coat classnames</li>
-  <li>subtypes</li>
-  <li>parametrized types</li>
-</ul>
-
-<p>The option <code>does</code> handles :</p>
-
-<ul>
-  <li>Coat rolenames</li>
-</ul>
-
-<p>Subtypes are declared by <code>subtype</code> or <code>enum</code>
-statements.</p>
-
-<p>Parametrized types have the following forms
-(and don't need a preliminary declaration):</p>
-
-<ul>
-  <li><code>table&lt;<em>type</em>&gt;</code></li>
-  <li><code>table&lt;<em>type_k</em>,<em>type_v</em>&gt;</code></li>
-</ul>
-
-<h3>Global Functions</h3>
-
-<h4><code>coerce.type = { from = via [, from = via, ...] }</code></h4>
-
-<p>Declares the <code>type</code> coerce from the type named <code>from</code>
-via a function <code>via</code>.</p>
-
-<h4><code>enum.name = { string1, string2 [, ...] }</code></h4>
-
-<p>Creates a subtype <code>name</code> for a given set of strings.</p>
-
-<h4><code>subtype.name = { as = parent, where = validator [, message = msg ] }</code></h4>
-
-<p>Creates a subtype <code>name</code> from the type <code>parent</code>
-which passes the constraint specified in the function <code>validator</code>,
-the optional <code>msg</code> is used as error message.</p>
-
-<h2><a name="examples"></a>Examples</h2>
-
-<h3>Constrained Types</h3>
+<p><code>mock</code> allows to override a method of an object.</p>
+<p><code>unmock</code> allows to restore the initial (ie. class) behavior
+of a mocked object.</p>
 
 <pre class="example">
-require 'Coat.Types'
+require 'Coat'
 
-subtype.Natural = {
-    as = 'number',
-    where = function (val) return val > 0 end,
-}
+class 'Rectangle'
+has.x               = { is = 'rw', isa = 'number', required = true }
+has.y               = { is = 'rw', isa = 'number', required = true }
 
-subtype.NaturalLessThanTen = {
-    as = 'Natural',
-    where = function (val) return val &lt; 10 end,
-    message = "This number (%d) is not less than ten!",
-}
-
-enum.MyApp.Colour = { 'Red', 'Green', 'Blue' }
-
-subtype.DateTime = {
-    as = 'string',
-    where = function (val) return true end,
-}
-
-coerce.DateTime = {
-    number = function (val) return os.date("!%d/%m/%Y %H:%M:%S", val) end
-}
+function method:getArea ()
+    return self.x * self.y
+end
 </pre>
 
-<h3>Parametrized Types</h3>
+<pre class="example">
+require 'Rectangle'
+
+r = Rectangle{ x = 2, y = 4 }
+
+r:mock('getArea', function () return 42 end)
+
+r:unmock 'getArea'
+</pre>
+
+<h2><a name="class"></a>Mock Class</h2>
+
+<p>Create mock class could be simply done with <code>override</code>.
+All instances (already created and future) are altered.
+It is not possible to restore the initial behavior.
+</p>
+
+<p>The 3 following syntax are equivalent :</p>
 
 <pre class="example">
-require 'Coat.Types'
+require 'Rectangle'
 
-class 'A'
+function Rectangle.override:getArea ()
+    return 42
+end
+</pre>
 
-has.array_of_str = { is = 'rw', isa = 'table&lt;string&gt;' }
-has.hash_of_a = { is = 'rw', isa = 'table&lt;string,A&gt;' }
-has.hash_of_num = { is = 'rw', isa = 'table&lt;string,number&gt;' }
-has.many_a = { is = 'rw', isa = 'table&lt;A&gt;' }
+<pre class="example">
+require 'Rectangle'
+
+Coat.override(Rectangle, 'getArea', function () return 42 end)
+</pre>
+
+<pre class="example">
+require 'Rectangle'
+
+r = Rectangle{ x = 2, y = 4 }
+
+function r.override:getArea ()
+    return 42
+end
 </pre>
 
 </div> <!-- id="content" -->

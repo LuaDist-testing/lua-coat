@@ -1,6 +1,6 @@
 
 --
--- lua-Coat : <http://lua-coat.luaforge.net/>
+-- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
 local basic_error = error
@@ -8,6 +8,7 @@ local getmetatable = getmetatable
 local pairs = pairs
 local pcall = pcall
 local rawget = rawget
+local rawset = rawset
 local require = require
 local setfenv = setfenv
 local setmetatable = setmetatable
@@ -43,7 +44,7 @@ function error (msg)
     basic_error(msg, lvl)
 end
 
-local function argerror (caller, narg, extramsg)
+function argerror (caller, narg, extramsg)
     error("bad argument #" .. tostring(narg) .. " to "
           .. caller .. " (" .. extramsg .. ")")
 end
@@ -117,7 +118,8 @@ function does (obj, r)
     end
 
     local function walk (roles)
-        for _, v in pairs(roles) do
+        for i = 1, #roles do
+            local v = roles[i]
             if v == r then
                 return true
             elseif basic_type(v) == 'table' then
@@ -145,7 +147,7 @@ function dump (obj, label)
     local function keys_sorted (t)
         local sorted = {}
         for k in pairs(t) do
-            table.insert(sorted, k)
+            sorted[#sorted+1] = k
         end
         table.sort(sorted, function (a, b)
                           local r, cmp = pcall(function () return a < b end)
@@ -178,7 +180,7 @@ function dump (obj, label)
                     local v = rawget(obj._VALUES, k)
                     local line = indent2 .. k .. " = "
                                          .. _dump(v, indent2, ref .. '.' .. k) .. ",\n"
-                    table.insert(lines, line)
+                    lines[#lines+1] = line
                 end
             else
                 str = "{"
@@ -189,7 +191,7 @@ function dump (obj, label)
                     local kr = "[" .. _dump(k, indent2) .. "]"
                     local line = indent2 .. kr .. " = "
                                          .. _dump(v, indent2, ref .. kr) .. ",\n"
-                    table.insert(lines, line)
+                    lines[#lines+1] = line
                 end
             end
             if #lines > 0 then
@@ -207,13 +209,19 @@ end
 function new (class, args)
     args = args or {}
 
-    for _, r in pairs(class._ROLE) do -- check roles
-        for _, v in pairs(r._EXCL) do
+    local roles = class._ROLE
+    for i = 1, #roles do -- check roles
+        local r = roles[i]
+        local excl = r._EXCL
+        for j = 1, #excl do
+            local v = excl[j]
             if class:does(v) then
                 error("Role " .. r._NAME .. " excludes role " .. v)
             end
         end
-        for _, v in pairs(r._REQ) do
+        local req = r._REQ
+        for j = 1, #req do
+            local v = req[j]
             if not class[v] then
                 error("Role " .. r._NAME .. " requires method " .. v)
             end
@@ -358,8 +366,9 @@ function _INIT (class, obj, args)
         end
     end
 
-    for i = 1, #class._PARENT do
-        local p = class._PARENT[i]
+    local parents = class._PARENT
+    for i = 1, #parents do
+        local p = parents[i]
         p._INIT(obj, args)
     end
 end
@@ -492,7 +501,9 @@ function has (class, name, options)
             if options.does ~= role._NAME then
                 error "The handles option requires a does option with the same role"
             end
-            for _, v in pairs(role._STORE) do
+            local store = role._STORE
+            for i = 1, #store do
+                local v = store[i]
                 if v[1] == 'method' then
                     local meth = v[2]
                     if class[meth] then
@@ -509,7 +520,7 @@ function has (class, name, options)
                     end -- delegate
                 end
             end
-            table.insert(class._DOES, role._NAME)
+            local t = class._DOES; t[#t+1] = role._NAME
         end
     end -- options.handles
 end
@@ -540,6 +551,25 @@ function override (class, name, func)
               .. name .. " in class " .. class._NAME)
     end
     class[name] = func
+end
+
+function mock (obj, name, func)
+    checktype('mock', 1, name, 'string')
+    checktype('mock', 2, func, 'function')
+    if not obj[name] then
+        error("Cannot mock non-existent method "
+              .. name .. " in class " .. obj._NAME)
+    end
+    rawset(obj, name, func)
+end
+
+function unmock (obj, name)
+    checktype('unmock', 1, name, 'string')
+    if not obj[name] then
+        error("Cannot unmock non-existent method "
+              .. name .. " in class " .. obj._NAME)
+    end
+    rawset(obj, name, nil)
 end
 
 function before (class, name, func)
@@ -646,19 +676,22 @@ function extends(class, ...)
                   .. class._NAME .."' and '" .. parent._NAME .. "'")
         end
 
-        table.insert(class._PARENT, parent)
-        table.insert(class._ISA, parent._ISA)
-        table.insert(class._DOES, parent._DOES)
-        for _, r in pairs(parent._ROLE) do
-            table.insert(class._ROLE, r)
+        local t = class._PARENT; t[#t+1] = parent
+        local t = class._ISA; t[#t+1] = parent._ISA
+        local t = class._DOES; t[#t+1] = parent._DOES
+        local t = class._ROLE
+        local roles = parent._ROLE
+        for i = 1, #roles do
+            t[#t+1] = roles[i]
         end
     end
 
     local t = getmetatable(class)
     t.__index = function (t, k)
                     local function search (cl)
-                        for i = 1, #cl._PARENT do
-                            local p = cl._PARENT[i]
+                        local parents = cl._PARENT
+                        for i = 1, #parents do
+                            local p = parents[i]
                             local v = rawget(p, k) or search(p)
                             if v then
                                 return v
@@ -666,11 +699,8 @@ function extends(class, ...)
                         end
                     end -- search
 
-                    local v = rawget(t, k)
-                    if v == nil then
-                        v = search(class)
-                        t[k] = v      -- save for next access
-                    end
+                    v = search(class)
+                    t[k] = v      -- save for next access
                     if v == nil then
                         v = _G[k]
                     end
@@ -679,8 +709,9 @@ function extends(class, ...)
     local a = getmetatable(class._ATTR)
     a.__index = function (t, k)
                     local function search (cl)
-                        for i = 1, #cl._PARENT do
-                            local p = cl._PARENT[i]
+                        local parents = cl._PARENT
+                        for i = 1, #parents do
+                            local p = parents[i]
                             local v = rawget(p._ATTR, k) or search(p)
                             if v then
                                 return v
@@ -688,11 +719,8 @@ function extends(class, ...)
                         end
                     end -- search
 
-                    local v = rawget(t, k)
-                    if v == nil then
-                        v = search(class)
-                        t[k] = v      -- save for next access
-                    end
+                    v = search(class)
+                    t[k] = v      -- save for next access
                     return v
                 end
 end
@@ -726,7 +754,8 @@ function with (class, ...)
                 if basic_type(excludes) ~= 'table' then
                     argerror('with-excludes', i, "table or string expected")
                 end
-                for i, name in pairs(excludes) do
+                for i = 1, #excludes do
+                    local name = excludes[i]
                     if basic_type(name) ~= 'string' then
                         argerror('with-excludes', i, "string expected")
                     end
@@ -744,9 +773,11 @@ function with (class, ...)
                 argerror('with', i, "string or Role expected")
             end
 
-            table.insert(class._DOES, role._NAME)
-            table.insert(class._ROLE, role)
-            for _, v in pairs(role._STORE) do
+            local t = class._DOES; t[#t+1] = role._NAME
+            local t = class._ROLE; t[#t+1] = role
+            local store = role._STORE
+            for i = 1, #store do
+                local v = store[i]
                 _G.Coat[v[1]](class, v[2], v[3])
             end
         end
@@ -766,7 +797,7 @@ function module (modname, level)
     return M
 end
 
-local function _class (modname)
+function _class (modname)
     local M = module(modname, 4)
     setmetatable(M, {
         __index = _G,
@@ -786,6 +817,8 @@ local function _class (modname)
     M.isa = isa
     M.does = does
     M.dump = dump
+    M.mock = mock
+    M.unmock = unmock
     M.new = function (...) return new(M, ...) end
     M.__gc = function (...) return __gc(M, ...) end
     M._INIT = function (...) return _INIT(M, ...) end
@@ -823,7 +856,7 @@ function _G.abstract (modname)
     M.new = function () error("Cannot instanciate an abstract class " .. modname) end
 end
 
-_VERSION = "0.8.3"
+_VERSION = "0.8.4"
 _DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
 _COPYRIGHT = "Copyright (c) 2009-2010 Francois Perrad"
 --

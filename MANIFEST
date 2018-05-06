@@ -1,9 +1,10 @@
+0001-implement-setfenv-deprecated-with-Lua-5.2.0-work3.patch
 CHANGES
 COPYRIGHT
 MANIFEST
 Makefile
-README
-doc/0001-implement-setfenv-deprecated-with-Lua-5.2.0-work3.patch
+README.md
+doc/Makefile
 doc/Point3D.png
 doc/coat.html
 doc/index.html
@@ -12,6 +13,7 @@ doc/inject.png
 doc/memoize.html
 doc/meta_class.html
 doc/meta_role.html
+doc/mock.html
 doc/role.html
 doc/types.html
 doc/uml.html
@@ -64,6 +66,7 @@ test/133-handles-rolename.t
 test/141-file.t
 test/151-inject.t
 test/161-memoize.t
+test/171-mock.t
 test/201-role_requires_meth.t
 test/202-role_meth_modifier.t
 test/203-attr_does.t

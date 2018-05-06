@@ -1,15 +1,13 @@
 
 --
--- lua-Coat : <http://lua-coat.luaforge.net/>
+-- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
 require 'Coat'
 
-local pairs = pairs
 local require = require
 local setmetatable = setmetatable
 local _G = _G
-local table = require 'table'
 
 local basic_type = type
 local checktype = Coat.checktype
@@ -22,26 +20,32 @@ local Meta = require 'Coat.Meta.Role'
 function has (role, name, options)
     checktype('has', 1, name, 'string')
     checktype('has', 2, options or {}, 'table')
-    table.insert(role._STORE, { 'has', name, options })
+    local t = role._STORE; t[#t+1] = { 'has', name, options }
 end
 
 function method (role, name, func)
     checktype('method', 1, name, 'string')
     checktype('method', 2, func, 'function')
-    table.insert(role._STORE, { 'method', name, func })
+    local t = role._STORE; t[#t+1] = { 'method', name, func }
 end
 
 function requires (role, ...)
-    for i, meth in pairs{...} do
+    local t = role._REQ
+    local arg = {...}
+    for i = 1, #arg do
+        local meth = arg[i]
         checktype('requires', i, meth, 'string')
-        table.insert(role._REQ, meth)
+        t[#t+1] = meth
     end
 end
 
 function excludes (role, ...)
-    for i, r in pairs{...} do
+    local t = role._EXCL
+    local arg = {...}
+    for i = 1, #arg do
+        local r = arg[i]
         checktype('excludes', i, r, 'string')
-        table.insert(role._EXCL, r)
+        t[#t+1] = r
     end
 end
 
