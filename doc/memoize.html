@@ -128,7 +128,7 @@ require 'Rectangle'
 Rectangle.memoize '_get_area'
 </pre>
 
-<p>All values are memoized in an uniq table <code>Coat.Meta.Class._CLASS</code>.
+<p>All values are memoized in an uniq table <code>Coat.Meta.Class._CACHE</code>.
 This table uses weak reference.</p>
 
 <p>The key is composed of the name of the method and the concatenation of stringified

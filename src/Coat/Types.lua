@@ -2,24 +2,24 @@
 -- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
-require 'Coat'
-
 local setmetatable = setmetatable
 local pairs = pairs
 local _G = _G
 local table = require 'table'
+local Coat = require 'Coat'
 
 local checktype = Coat.checktype
 local does = Coat.does
 local error = Coat.error
 local isa = Coat.isa
 
-module 'Coat.Types'
+_ENV = nil
+local _M = {}
 
 local _TC = {}
 local _COERCE = {}
 
-function find_type_constraint (name)
+local function find_type_constraint (name)
     local tc = _TC[name]
     if tc then
         return tc
@@ -66,12 +66,14 @@ function find_type_constraint (name)
     end
     return tc
 end
+_M.find_type_constraint = find_type_constraint
 
-function coercion_map (name)
+local function coercion_map (name)
     return _COERCE[name]
 end
+_M.coercion_map = coercion_map
 
-function subtype (name, t)
+local function subtype (name, t)
     checktype('subtype', 1, name, 'string')
     checktype('subtype', 2, t, 'table')
     local parent = t.as
@@ -89,6 +91,7 @@ function subtype (name, t)
         message = message,
     }
 end
+_M.subtype = subtype
 local function _subtype(m)
     if m ~= '' then
         m = m .. '.'
@@ -100,7 +103,7 @@ local function _subtype(m)
 end
 _G.subtype = _subtype ''
 
-function enum (name, t)
+local function enum (name, t)
     checktype('enum', 1, name, 'string')
     checktype('enum', 2, t, 'table')
     if _TC[name] then
@@ -122,6 +125,7 @@ function enum (name, t)
                     end,
     }
 end
+_M.enum = enum
 local function _enum(m)
     if m ~= '' then
         m = m .. '.'
@@ -133,7 +137,7 @@ local function _enum(m)
 end
 _G.enum = _enum ''
 
-function coerce (name, t)
+local function coerce (name, t)
     checktype('coerce', 1, name, 'string')
     checktype('coerce', 2, t, 'table')
     if not _COERCE[name] then
@@ -145,6 +149,7 @@ function coerce (name, t)
         _COERCE[name][from] = via
     end
 end
+_M.coerce = coerce
 local function _coerce(m)
     if m ~= '' then
         m = m .. '.'
@@ -156,6 +161,7 @@ local function _coerce(m)
 end
 _G.coerce = _coerce ''
 
+return _M
 --
 -- Copyright (c) 2009-2010 Francois Perrad
 --

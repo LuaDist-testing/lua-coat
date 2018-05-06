@@ -4,17 +4,23 @@
 --
 
 if #arg == 0 then
-    print "Usage: coat2dot [--no-attr] [--no-meth] [--no-meta] module1 [module2, ...]"
+    print 'Usage: coat2dot [--no-attr] [--no-meth] [--no-meta] [--note="message"] module1 [module2, ...]'
     os.exit(0)
 end
 
 local m = require 'Coat.UML'
 
 local opt = {}
-for _, v in ipairs(arg) do
+for i = 1, #arg do
+    local v = arg[i]
     if v:sub(1,2) == '--' then
         local k = v:sub(3):gsub('-','_')
-        opt[k] = true
+        local idx = k:find '='
+        if idx then
+            opt[k:sub(1, idx-1)] = k:sub(idx+1)
+        else
+            opt[k] = true
+        end
     else
         require(v)
     end

@@ -3,18 +3,19 @@
 -- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
-module 'Coat.Meta.Role'
+_ENV = nil
+local _M = {}
 
 local _roles = {}
-function roles ()
+function _M.roles ()
     return _roles
 end
 
-function role (name)
+function _M.role (name)
     return _roles[name]
 end
 
-function attributes (role)
+function _M.attributes (role)
     local i = 0
     return  function ()
                 local v
@@ -27,7 +28,7 @@ function attributes (role)
             end
 end
 
-function methods (role)
+function _M.methods (role)
     local i = 0
     return  function ()
                 local v
@@ -35,11 +36,14 @@ function methods (role)
                     i = i + 1
                     v = role._STORE[i]
                     if not v then return nil end
-                until v[1] == 'method'
+                    local name = v[2]
+                until v[1] == 'method' and not name:match '^_build_'
+                  and not name:match '^_get_' and not name:match '^_set_'
                 return v[2], v[3]
             end
 end
 
+return _M
 --
 -- Copyright (c) 2009-2010 Francois Perrad
 --

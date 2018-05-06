@@ -3,33 +3,33 @@
 -- lua-Coat : <http://fperrad.github.com/lua-Coat/>
 --
 
-require 'Coat'
-
-local require = require
 local setmetatable = setmetatable
 local _G = _G
+local Coat = require 'Coat'
+local Meta = require 'Coat.Meta.Role'
 
 local basic_type = type
 local checktype = Coat.checktype
 local coat_module = Coat.module
 
-module 'Coat.Role'
+_ENV = nil
+local _M = {}
 
-local Meta = require 'Coat.Meta.Role'
-
-function has (role, name, options)
+local function has (role, name, options)
     checktype('has', 1, name, 'string')
     checktype('has', 2, options or {}, 'table')
     local t = role._STORE; t[#t+1] = { 'has', name, options }
 end
+_M.has = has
 
-function method (role, name, func)
+local function method (role, name, func)
     checktype('method', 1, name, 'string')
     checktype('method', 2, func, 'function')
     local t = role._STORE; t[#t+1] = { 'method', name, func }
 end
+_M.method = method
 
-function requires (role, ...)
+local function requires (role, ...)
     local t = role._REQ
     local arg = {...}
     for i = 1, #arg do
@@ -38,8 +38,9 @@ function requires (role, ...)
         t[#t+1] = meth
     end
 end
+_M.requires = requires
 
-function excludes (role, ...)
+local function excludes (role, ...)
     local t = role._EXCL
     local arg = {...}
     for i = 1, #arg do
@@ -48,6 +49,7 @@ function excludes (role, ...)
         t[#t+1] = r
     end
 end
+_M.excludes = excludes
 
 function _G.role (modname)
     checktype('role', 1, modname, 'string')
@@ -64,6 +66,7 @@ function _G.role (modname)
     roles[modname] = M
 end
 
+return _M
 --
 -- Copyright (c) 2009-2010 Francois Perrad
 --

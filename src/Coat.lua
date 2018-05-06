@@ -16,15 +16,34 @@ local tostring = tostring
 local basic_type = type
 local _G = _G
 local debug = require 'debug'
-local package = require 'package'
+local loaded = require 'package'.loaded
 local string = require 'string'
 local table = require 'table'
 
-module 'Coat'
+_ENV = nil
+local _M = {}
 
 local Meta = require 'Coat.Meta.Class'
 
-function type (obj)
+if _G._VERSION == 'Lua 5.2' then
+    setfenv = function (level, M)
+        local func = debug.getinfo(level + 1, 'f').func
+        local up = 1
+        while true do
+            local name = debug.getupvalue(func, up)
+            if name == '_ENV' then
+                debug.setupvalue(func, up, M)
+                return
+            end
+            if name == nil then
+                basic_error "_ENV not found"
+            end
+            up = up + 1
+        end
+    end
+end
+
+local function type (obj)
     local t = basic_type(obj)
     if t == 'table' then
         pcall(function ()
@@ -33,8 +52,9 @@ function type (obj)
     end
     return t
 end
+_M.type = type
 
-function error (msg)
+local function error (msg)
     local lvl = 1
     while true do
         local t = debug.getinfo(lvl,'S')
@@ -43,24 +63,26 @@ function error (msg)
     end
     basic_error(msg, lvl)
 end
+_M.error = error
 
-function argerror (caller, narg, extramsg)
+local function argerror (caller, narg, extramsg)
     error("bad argument #" .. tostring(narg) .. " to "
           .. caller .. " (" .. extramsg .. ")")
 end
+_M.argerror = argerror
 
 local function typerror (caller, narg, arg, tname)
     argerror(caller, narg, tname .. " expected, got " .. type(arg))
 end
 
-function checktype (caller, narg, arg, tname)
+local function checktype (caller, narg, arg, tname)
     if basic_type(arg) ~= tname then
         typerror(caller, narg, arg, tname)
     end
 end
-local checktype = checktype
+_M.checktype = checktype
 
-function findtable (fname)
+local function findtable (fname)
     local i = 1
     local t = _G
     for w in fname:gmatch "(%w+)%." do
@@ -73,12 +95,13 @@ function findtable (fname)
     return t[name]
 end
 
-function can (obj, name)
+local function can (obj, name)
     checktype('can', 2, name, 'string')
     return basic_type(obj[name]) == 'function'
 end
+_M.can = can
 
-function isa (obj, t)
+local function isa (obj, t)
     if basic_type(t) == 'table' and t._NAME then
         t = t._NAME
     end
@@ -108,8 +131,9 @@ function isa (obj, t)
         return basic_type(obj) == t
     end
 end
+_M.isa = isa
 
-function does (obj, r)
+local function does (obj, r)
     if basic_type(r) == 'table' and r._NAME then
         r = r._NAME
     end
@@ -139,8 +163,9 @@ function does (obj, r)
         return false
     end
 end
+_M.does = does
 
-function dump (obj, label)
+local function dump (obj, label)
     label = label or 'obj'
     local seen = {}
 
@@ -205,8 +230,9 @@ function dump (obj, label)
 
     return label .. " = " .. _dump(obj, '', label)
 end
+_M.dump = dump
 
-function new (class, args)
+local function new (class, args)
     args = args or {}
 
     local roles = class._ROLE
@@ -256,17 +282,20 @@ function new (class, args)
     end
     return obj
 end
+_M.new = new
 
-function instance (class, args)
+local function instance (class, args)
     class._INSTANCE = class._INSTANCE or new(class, args)
     return class._INSTANCE
 end
+_M.instance = instance
 
-function __gc (class, obj)
+local function __gc (class, obj)
     if class.DEMOLISH then
         class.DEMOLISH(obj)
     end
 end
+_M.__gc = __gc
 
 local function attr_default (options, obj)
     local builder = options.builder
@@ -294,6 +323,7 @@ local function validate (name, options, val)
     else
         if options.isa then
             if options.coerce then
+                local Types = loaded['Coat.Types']
                 local mapping = Types and Types.coercion_map(options.isa)
                 if not mapping then
                     error("Coercion is not available for type " .. options.isa)
@@ -305,6 +335,7 @@ local function validate (name, options, val)
             end
 
             local function check_isa (tname)
+                local Types = loaded['Coat.Types']
                 local tc = Types and Types.find_type_constraint(tname)
                 if tc then
                     check_isa(tc.parent)
@@ -341,7 +372,7 @@ local function validate (name, options, val)
     return val
 end
 
-function _INIT (class, obj, args)
+local function _INIT (class, obj, args)
     for k, opts in pairs(class._ATTR) do
         if obj._VALUES[k] == nil then
             local val = args[k]
@@ -355,7 +386,7 @@ function _INIT (class, obj, args)
             val = validate(k, opts, val)
             obj._VALUES[k] = val
         else
-            val = validate(k, opts, obj._VALUES[k])
+            validate(k, opts, obj._VALUES[k])
         end
     end
 
@@ -372,8 +403,9 @@ function _INIT (class, obj, args)
         p._INIT(obj, args)
     end
 end
+_M._INIT = _INIT
 
-function has (class, name, options)
+local function has (class, name, options)
     checktype('has', 1, name, 'string')
     options = options or {}
     checktype('has', 2, options, 'table')
@@ -382,7 +414,7 @@ function has (class, name, options)
         error("Overwrite definition of method " .. name)
     end
     if options[1] == '+' then
-        inherited = class._ATTR[name]
+        local inherited = class._ATTR[name]
         if inherited == nil then
             error("Cannot overload unknown attribute " .. name)
         end
@@ -524,8 +556,9 @@ function has (class, name, options)
         end
     end -- options.handles
 end
+_M.has = has
 
-function method (class, name, func)
+local function method (class, name, func)
     checktype('method', 1, name, 'string')
     checktype('method', 2, func, 'function')
     if class._ATTR[name] then
@@ -536,14 +569,16 @@ function method (class, name, func)
     end
     class[name] = func
 end
+_M.method = method
 
-function overload (class, name, func)
+local function overload (class, name, func)
     checktype('overload', 1, name, 'string')
     checktype('overload', 2, func, 'function')
     class._MT[name] = func
 end
+_M.overload = overload
 
-function override (class, name, func)
+local function override (class, name, func)
     checktype('override', 1, name, 'string')
     checktype('override', 2, func, 'function')
     if not class[name] then
@@ -552,8 +587,9 @@ function override (class, name, func)
     end
     class[name] = func
 end
+_M.override = override
 
-function mock (obj, name, func)
+local function mock (obj, name, func)
     checktype('mock', 1, name, 'string')
     checktype('mock', 2, func, 'function')
     if not obj[name] then
@@ -562,8 +598,9 @@ function mock (obj, name, func)
     end
     rawset(obj, name, func)
 end
+_M.mock = mock
 
-function unmock (obj, name)
+local function unmock (obj, name)
     checktype('unmock', 1, name, 'string')
     if not obj[name] then
         error("Cannot unmock non-existent method "
@@ -571,8 +608,9 @@ function unmock (obj, name)
     end
     rawset(obj, name, nil)
 end
+_M.unmock = unmock
 
-function before (class, name, func)
+local function before (class, name, func)
     checktype('before', 1, name, 'string')
     checktype('before', 2, func, 'function')
     local super = class[name]
@@ -586,8 +624,9 @@ function before (class, name, func)
         super(...)
     end
 end
+_M.before = before
 
-function around (class, name, func)
+local function around (class, name, func)
     checktype('around', 1, name, 'string')
     checktype('around', 2, func, 'function')
     local super = class[name]
@@ -600,8 +639,9 @@ function around (class, name, func)
         return func(obj, super,  ...)
     end
 end
+_M.around = around
 
-function after (class, name, func)
+local function after (class, name, func)
     checktype('after', 1, name, 'string')
     checktype('after', 2, func, 'function')
     local super = class[name]
@@ -615,8 +655,9 @@ function after (class, name, func)
         func(...)
     end
 end
+_M.after = after
 
-function memoize (class, name)
+local function memoize (class, name)
     checktype('memoize', 1, name, 'string')
     local func = class[name]
     if not func then
@@ -639,8 +680,9 @@ function memoize (class, name)
         return result
     end
 end
+_M.memoize = memoize
 
-function bind (class, name, impl)
+local function bind (class, name, impl)
     checktype('bind', 1, name, 'string')
     local t = basic_type(impl)
     if t ~= 'function' then
@@ -656,8 +698,9 @@ function bind (class, name, impl)
     end
     class._BINDING[name] = impl
 end
+_M.bind = bind
 
-function extends(class, ...)
+local function extends(class, ...)
     local arg = {...}
     for i = 1, #arg do
         local v = arg[i]
@@ -699,7 +742,7 @@ function extends(class, ...)
                         end
                     end -- search
 
-                    v = search(class)
+                    local v = search(class)
                     t[k] = v      -- save for next access
                     if v == nil then
                         v = _G[k]
@@ -719,13 +762,14 @@ function extends(class, ...)
                         end
                     end -- search
 
-                    v = search(class)
+                    local v = search(class)
                     t[k] = v      -- save for next access
                     return v
                 end
 end
+_M.extends = extends
 
-function with (class, ...)
+local function with (class, ...)
     local arg = {...}
     local role
     for i = 1, #arg do
@@ -778,26 +822,28 @@ function with (class, ...)
             local store = role._STORE
             for i = 1, #store do
                 local v = store[i]
-                _G.Coat[v[1]](class, v[2], v[3])
+                _M[v[1]](class, v[2], v[3])
             end
         end
     end
 end
+_M.with = with
 
-function module (modname, level)
-    if basic_type(package.loaded[modname]) == 'table' then
+local function module (modname, level)
+    if basic_type(loaded[modname]) == 'table' then
         error("name conflict for module '" .. modname .. "'")
     end
 
     local M = findtable(modname)
-    package.loaded[modname] = M
+    loaded[modname] = M
     M._NAME = modname
     M._M = M
     setfenv(level, M)
     return M
 end
+_M.module = module
 
-function _class (modname)
+local function _class (modname)
     local M = module(modname, 4)
     setmetatable(M, {
         __index = _G,
@@ -837,6 +883,7 @@ function _class (modname)
     classes[modname] = M
     return M
 end
+_M._class = _class
 
 function _G.class (modname)
     checktype('class', 1, modname, 'string')
@@ -856,9 +903,23 @@ function _G.abstract (modname)
     M.new = function () error("Cannot instanciate an abstract class " .. modname) end
 end
 
-_VERSION = "0.8.4"
-_DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
-_COPYRIGHT = "Copyright (c) 2009-2010 Francois Perrad"
+function _G.augment (class)
+    local M
+    if basic_type(class) == 'string' then
+        M = require(class)
+    elseif class._NAME then
+        M = class
+    end
+    if not M or not M._INIT then
+        argerror('augment', 1, "string or Class expected")
+    end
+    setfenv(2, M)
+end
+
+_M._VERSION = "0.8.5"
+_M._DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
+_M._COPYRIGHT = "Copyright (c) 2009-2010 Francois Perrad"
+return _M
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

@@ -1,7 +1,5 @@
 #!/usr/bin/env lua
 
-module('MyApp', package.seeall)
-
 require 'Coat.Role'
 
 role 'MyApp.Biz'

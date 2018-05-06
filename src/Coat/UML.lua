@@ -9,7 +9,8 @@ local table = require 'table'
 local mc = require 'Coat.Meta.Class'
 local mr = require 'Coat.Meta.Role'
 
-module 'Coat.UML'
+_ENV = nil
+local _M = {}
 
 local function escape (txt)
     txt = txt:gsub( '&', '&amp;' )
@@ -32,7 +33,7 @@ local function find_type (name)
         if idx then
             typev = typev:sub(idx+1)
         end
-        return find_type(typev)
+        return find_type(typev), true
     end
 end
 
@@ -53,12 +54,17 @@ local function sort (...)
             end
 end
 
-function to_dot (opt)
+function _M.to_dot (opt)
     opt = opt or {}
     local with_attr = not opt.no_attr
     local with_meth = not opt.no_meth
     local with_meta = not opt.no_meta
+    local note = opt.note
     local out = 'digraph {\n\n    node [shape=record];\n\n'
+    if note then
+        out = out .. '    "__note__"\n'
+        out = out .. '        [label="' .. note .. '" shape=note];\n\n'
+    end
     for classname, class in pairs(mc.classes()) do
         out = out .. '    "' .. classname .. '"\n'
         out = out .. '        [label="{'
@@ -104,15 +110,19 @@ function to_dot (opt)
         out = out .. '}"];\n'
         for name, attr in mc.attributes(class) do
             if attr.isa then
-                local isa = find_type(attr.isa)
+                local isa, agreg = find_type(attr.isa)
                 if isa then
                     out = out .. '    "' .. classname .. '" -> "' .. isa .. '" // attr isa ' .. attr.isa .. '\n'
-                    out = out .. '        [label = "' .. name .. '", arrowhead = none, arrowtail = odiamond];\n'
+                    if agreg then
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = odiamond];\n'
+                    else
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
+                    end
                 end
             end
             if attr.does and mr.role(attr.does) then
                 out = out .. '    "' .. classname .. '" -> "' .. attr.does .. '" // attr does\n'
-                out = out .. '        [label = "' .. name .. '", arrowhead = none, arrowtail = odiamond];\n'
+                out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
             end
         end
         for parent in mc.parents(class) do
@@ -157,15 +167,19 @@ function to_dot (opt)
         out = out .. '}"];\n\n'
         for name, attr in mr.attributes(role) do
             if attr.isa then
-                local isa = find_type(attr.isa)
+                local isa, agreg = find_type(attr.isa)
                 if isa then
                     out = out .. '    "' .. rolename .. '" -> "' .. isa .. '" // attr isa ' .. attr.isa .. '\n'
-                    out = out .. '        [label = "' .. name .. '", arrowhead = none, arrowtail = odiamond];\n'
+                    if agreg then
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = odiamond];\n'
+                    else
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
+                    end
                 end
             end
             if attr.does and mr.role(attr.does) then
                 out = out .. '    "' .. rolename .. '" -> "' .. attr.does .. '" // attr does\n'
-                out = out .. '        [label = "' .. name .. '", arrowhead = none, arrowtail = odiamond];\n'
+                out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
             end
         end
     end
@@ -173,6 +187,7 @@ function to_dot (opt)
     return out
 end
 
+return _M
 --
 -- Copyright (c) 2009-2010 Francois Perrad
 --

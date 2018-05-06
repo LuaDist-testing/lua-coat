@@ -20,15 +20,17 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
+local mc = require 'Coat.Meta.Class'
+
 point2d = Point.new{ x = 2, y = 4}
 is( point2d:type(), 'Point', "Point" )
 ok( point2d:isa 'Point' )
-nok( Coat.Meta.Class.has( Point, 'z' ) )
+nok( mc.has( Point, 'z' ) )
 
 point3d = Point3D.new{ x = 1, y = 3, z = 1}
 is( point3d:type(), 'Point3D', "Point3D" )
 ok( point3d:isa 'Point3D' )
-ok( Coat.Meta.Class.has( Point3D, 'z' ) )
+ok( mc.has( Point3D, 'z' ) )
 
 item = MyItem3D.new{ name = 'foo', x = 4, z = 3 }
 is( item:type(), 'MyItem3D', "MyItem3D" )

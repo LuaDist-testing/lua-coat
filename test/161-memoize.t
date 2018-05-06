@@ -46,7 +46,7 @@ is( foo:sum(1, 2, 3), 6 )
 is( foo.cntCall, 4 )
 
 local n = 0
-for k, v in pairs(Coat.Meta.Class._CACHE) do
+for k, v in pairs(require 'Coat.Meta.Class'._CACHE) do
     diag(k .. " -> " .. v)
     n = n + 1
 end

@@ -5,10 +5,12 @@
 local getmetatable = getmetatable
 local io = require 'io'
 
-module 'Coat.file'
+_ENV = nil
+local _M = {}
 
 getmetatable(io.input())._ISA = { 'file' }
 
+return _M
 --
 -- Copyright (c) 2010 Francois Perrad
 --

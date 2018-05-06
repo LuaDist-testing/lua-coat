@@ -37,12 +37,14 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
+local mc = require 'Coat.Meta.Class'
+
 man = Person.new{ name = 'John' }
 ok( man:isa 'Person', "Person" )
 ok( man:isa(Person) )
 ok( man:isa(man) )
-ok( Coat.Meta.Class.has( Person, 'name' ) )
-ok( Coat.Meta.Class.has( Person, 'force' ) )
+ok( mc.has( Person, 'name' ) )
+ok( mc.has( Person, 'force' ) )
 is( man.force, 1 )
 ok( man:walk() )
 
@@ -56,8 +58,8 @@ ok( soldier:isa 'Soldier', "Soldier" )
 ok( soldier:isa 'Person' )
 ok( soldier:isa(Person) )
 ok( soldier:isa(man) )
-ok( Coat.Meta.Class.has( Soldier, 'name' ) )
-ok( Coat.Meta.Class.has( Soldier, 'force' ) )
+ok( mc.has( Soldier, 'name' ) )
+ok( mc.has( Soldier, 'force' ) )
 is( soldier.force, 3 )
 ok( soldier:walk() )
 ok( soldier:attack() )
@@ -66,8 +68,8 @@ general = General.new{ name = 'Smith' }
 ok( general:isa 'General', "General" )
 ok( general:isa 'Soldier' )
 ok( general:isa 'Person' )
-ok( Coat.Meta.Class.has( General, 'name' ) )
-ok( Coat.Meta.Class.has( General, 'force' ) )
+ok( mc.has( General, 'name' ) )
+ok( mc.has( General, 'force' ) )
 is( general.force, 5 )
 ok( general:walk() )
 ok( general:attack() )
