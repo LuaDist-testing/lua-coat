@@ -13,7 +13,7 @@ local _G = _G
 local package = package
 local table = table
 
-local basic_type = Coat.basic_type
+local basic_type = type
 local checktype = Coat.checktype
 local findtable = Coat.findtable
 

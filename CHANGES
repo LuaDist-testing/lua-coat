@@ -1,5 +1,10 @@
 Revision history for lua-Coat
 
+0.5.1  Fri Oct 16 10:30:00 2009
+	+ the standard function 'type' is no longer overloaded
+	+ use lua-TestMore (instead of lunity)
+	+ few bugs
+
 0.5.0  Mon Aug 24 15:30:00 2009
 	+ full refactor with a more luaesque syntax
 		NOT COMPATIBLE with previous versions

@@ -58,8 +58,13 @@ dist: $(TARBALL)
 rockspec: $(TARBALL)
 	perl -e '$(rockspec_pl)' rockspec.in > rockspec/lua-coat-$(VERSION)-$(REV).rockspec
 
+export LUA_PATH=;;./src/?.lua;./test/?.lua
+
 test:
-	$(MAKE) -C test
+	@prove --exec=lua test/*.t
+
+html:
+	xmllint --noout --valid doc/*.html
 
 clean:
 	rm -f MANIFEST *.bak

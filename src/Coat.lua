@@ -12,25 +12,23 @@ local rawget = rawget
 local require = require
 local setfenv = setfenv
 local setmetatable = setmetatable
-local type = type
+local basic_type = type
 local _G = _G
 local package = package
+local string = string
 local table = table
 
 module 'Coat'
 
 local Meta = require 'Coat.Meta'
 
-basic_type = type
-local basic_type = basic_type
-local function object_type (obj)
+function type (obj)
     local t = basic_type(obj)
     if t == 'table' then
         pcall(function () t = obj._CLASS or t end)
     end
     return t
 end
-_G.type = object_type
 
 local function argerror (caller, narg, extramsg)
     error("bad argument #" .. tostring(narg) .. " to "
@@ -38,7 +36,7 @@ local function argerror (caller, narg, extramsg)
 end
 
 local function typerror (caller, narg, arg, tname)
-    argerror(caller, narg, tname .. " expected, got " .. object_type(arg))
+    argerror(caller, narg, tname .. " expected, got " .. type(arg))
 end
 
 function checktype (caller, narg, arg, tname)
@@ -188,7 +186,7 @@ local function validate (name, options, val)
                 if not mapping then
                     error("Coercion is not available for type " .. options.isa)
                 end
-                local coerce = mapping[object_type(val)]
+                local coerce = mapping[type(val)]
                 if coerce then
                     val = coerce(val)
                 end
@@ -211,7 +209,7 @@ local function validate (name, options, val)
                 else
                     if not isa(val, tname) then
                         error("Invalid type for attribute '" .. name
-                              .. "' (got " .. object_type(val)
+                              .. "' (got " .. type(val)
                               .. ", expected " .. tname ..")")
                     end
                 end
@@ -587,6 +585,7 @@ function _G.class (modname)
     M._MT = { __index = M }
     M._ATTR = {}
     setmetatable(M._ATTR, {})
+    M.type = type
     M.can = can
     M.isa = isa
     M.does = does
@@ -606,7 +605,7 @@ function _G.class (modname)
     classes[modname] = M
 end
 
-_VERSION = "0.5.0"
+_VERSION = "0.5.1"
 _DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
 _COPYRIGHT = "Copyright (c) 2009 Francois Perrad"
 --

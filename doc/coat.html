@@ -79,10 +79,6 @@
 
 <p>Create a Coat class as a standard Lua module.</p>
 
-<h4><code>type( obj )</code></h4>
-
-<p>This standard function is overloaded.</p>
-
 <h3>Functions in the <em>built Class</em></h3>
 
 <h4><code>after.name = func</code></h4>
@@ -99,11 +95,11 @@
 
 <h4><code>can( obj, methname )</code> or <code>obj:can( methname )</code></h4>
 
-<p>Checks if a object has a method <code>methname<code>.</p>
+<p>Checks if a object has a method <code>methname</code>.</p>
 
 <h4><code>does( obj, r )</code> or <code>obj:does( r )</code></h4>
 
-<p>Checks if a object consumes <code>r<code> which is a role or rolename.</p>
+<p>Checks if a object consumes <code>r</code> which is a role or rolename.</p>
 
 <h4><code>extends( class [, ...] )</code></h4>
 
@@ -112,30 +108,29 @@
 <h4><code>has.name = { ['+', ] option1 = value1, option2 = value2, ... }</code></h4>
 
 <p>Adds a attribute <code>name</code> in the current class.
-A item <code>'+'</code> allows overriding.</p>
+An item <code>'+'</code> allows overriding.</p>
 
-<p>The following options are available :
-  <ul>
-    <li><code>builder</code> : function name </li>
-    <li><code>clearer</code> : function name </li>
-    <li><code>coerce</code> : boolean </li>
-    <li><code>default</code> : value or function </li>
-    <li><code>does</code> : role name</li>
-    <li><code>handles</code> : table for method delegation</li>
-    <li><code>is</code> : string <code>(ro|rw)</code></li>
-    <li><code>isa</code> : type name</li>
-    <li><code>lazy</code> : boolean </li>
-    <li><code>lazy_build</code> : boolean </li>
-    <li><code>reader</code> : function name </li>
-    <li><code>required</code> : boolean </li>
-    <li><code>trigger</code> : function </li>
-    <li><code>writer</code> : function name </li>
-  </ul>
-</p>
+<p>The following options are available :</p>
+<ul>
+  <li><code>builder</code> : function name </li>
+  <li><code>clearer</code> : function name </li>
+  <li><code>coerce</code> : boolean </li>
+  <li><code>default</code> : value or function </li>
+  <li><code>does</code> : role name</li>
+  <li><code>handles</code> : table for method delegation</li>
+  <li><code>is</code> : string <code>(ro|rw)</code></li>
+  <li><code>isa</code> : type name</li>
+  <li><code>lazy</code> : boolean </li>
+  <li><code>lazy_build</code> : boolean </li>
+  <li><code>reader</code> : function name </li>
+  <li><code>required</code> : boolean </li>
+  <li><code>trigger</code> : function </li>
+  <li><code>writer</code> : function name </li>
+</ul>
 
-<h4><code>isa( obj, t )</code> or obj:isa( t )</code></h4>
+<h4><code>isa( obj, t )</code> or <code>obj:isa( t )</code></h4>
 
-<p>Checks if a object is an instance of <code>t<code> which is a class or classname.</p>
+<p>Checks if a object is an instance of <code>t</code> which is a class or classname.</p>
 
 <h4><code>overload.name = func</code></h4>
 
@@ -153,7 +148,11 @@ A item <code>'+'</code> allows overriding.</p>
 
 <p>Instanciates a object.</p>
 
-<p>If exist, the user method <code>BUILD</code> is called at the end.<p>
+<p>If exist, the user method <code>BUILD</code> is called at the end.</p>
+
+<h4><code>type( obj )</code> or <code>obj:type()</code></h4>
+
+<p>Returns the type of <code>obj</code>.</p>
 
 <h4><code>with( role [, alias-excludes ] [, role, ... ] )</code></h4>
 

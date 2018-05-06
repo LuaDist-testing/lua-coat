@@ -1,10 +1,18 @@
+-- This file was automatically generated for the LuaDist project.
+
 package = 'lua-Coat'
-version = '@version@-@rev@'
+version = '0.5.1-2'
+-- LuaDist source
 source = {
-    url = 'http://cloud.github.com/downloads/fperrad/lua-Coat/lua-coat-@version@.tar.gz',
-    md5 = '@md5@',
-    dir = 'lua-Coat-@version@',
+  tag = "0.5.1-2",
+  url = "git://github.com/LuaDist-testing/lua-coat.git"
 }
+-- Original source
+-- source = {
+--     url = 'http://cloud.github.com/downloads/fperrad/lua-Coat/lua-coat-0.5.1.tar.gz',
+--     md5 = '10fcadedff41b1666ef91fcb69a4ff6a',
+--     dir = 'lua-Coat-0.5.1',
+-- }
 description = {
     summary = "Yet Another Lua Object-Oriented Model",
     detailed = [[
@@ -19,7 +27,7 @@ description = {
 }
 dependencies = {
     'lua >= 5.1',
-    'lua-TestMore >= 0.1.0',
+    'lua-testmore >= 0.1.0',
 }
 build = {
     type = 'builtin',
