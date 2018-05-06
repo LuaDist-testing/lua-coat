@@ -10,7 +10,7 @@ local Meta = require 'Coat.Meta.Role'
 
 local basic_type = type
 local checktype = Coat.checktype
-local coat_module = Coat.module
+local module = Coat.module
 
 _ENV = nil
 local _M = {}
@@ -53,7 +53,7 @@ _M.excludes = excludes
 
 function _G.role (modname)
     checktype('role', 1, modname, 'string')
-    local M = coat_module(modname, 3)
+    local M = module(modname, 3)
     setmetatable(M, { __index = _G })
     M._STORE = {}
     M._REQ = {}

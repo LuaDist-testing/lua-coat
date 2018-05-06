@@ -1,8 +1,11 @@
 CHANGES
+CMakeLists.txt
 COPYRIGHT
 MANIFEST
 Makefile
 README.md
+dist.cmake
+dist.info
 doc/Makefile
 doc/Point3D.png
 doc/coat.html

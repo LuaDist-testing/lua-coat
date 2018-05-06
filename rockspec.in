@@ -22,7 +22,7 @@ dependencies = {
     'lua-testmore >= 0.2.3',
 }
 build = {
-    type = 'none',
+    type = 'builtin',
     modules = {
         ['Coat']                = 'src/Coat.lua',
         ['Coat.Meta.Class']     = 'src/Coat/Meta/Class.lua',

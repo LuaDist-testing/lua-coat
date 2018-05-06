@@ -12,7 +12,7 @@ extends( 'Point3D', MyItem )
 
 require 'Test.More'
 
-plan(18)
+plan(19)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 006.png", 'w')
@@ -48,6 +48,16 @@ obj = MyItem3D {
   y = 0,
   z = 3,
 }]], "dump" )
+
+t = {}
+for k in pairs(item) do
+    t[#t+1] = k
+end
+table.sort(t)
+if _VERSION == 'Lua 5.1' then
+    todo("__pairs only with Lua 5.2", 1)
+end
+is( table.concat(t, ','), 'name,x,y,z', "__pairs" )
 
 error_like([[MyItem3D.extends {}]],
            "bad argument #1 to extends %(string or Class expected%)")
