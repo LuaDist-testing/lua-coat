@@ -14,21 +14,21 @@ has.buffer = {
     default = function () return {} end,
 }
 
-method.BUILD = function (self)
-    table.insert( self:buffer(), "BUILD A" )
+function method:BUILD ()
+    table.insert( self.buffer, "BUILD A" )
 end
-method.DEMOLISH = function (self)
-    _G.REG.A[self:id()] = self:buffer()
+function method:DEMOLISH ()
+    _G.REG.A[self.id] = self.buffer
 end
 
 class 'B'
 extends 'A'
 
-after.BUILD = function (self)
-    table.insert( self:buffer(), "BUILD B" )
+function after:BUILD ()
+    table.insert( self.buffer, "BUILD B" )
 end
-before.DEMOLISH = function (self)
-    _G.REG.B[self:id()] = self:buffer()
+function before:DEMOLISH ()
+    _G.REG.B[self.id] = self.buffer
 end
 
 
@@ -36,13 +36,19 @@ require 'Test.More'
 
 plan(8)
 
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 028.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
+
 _G.REG = {}
 
 expected = { "BUILD A" }
 _G.REG.A = {}
 a = A{ id = 1 }
 ok( a:isa 'A', "A" )
-eq_array( a:buffer(), expected )
+eq_array( a.buffer, expected )
 a:__gc()  -- manual
 a = nil
 -- collectgarbage 'collect'
@@ -54,7 +60,7 @@ _G.REG.B = {}
 b = B{ id = 2 }
 ok( b:isa 'B', "B" )
 ok( b:isa 'A' )
-eq_array( b:buffer(), expected )
+eq_array( b.buffer, expected )
 b:__gc()  -- manual
 b = nil
 -- collectgarbage 'collect'

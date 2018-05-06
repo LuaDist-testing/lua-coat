@@ -3,16 +3,22 @@
 require 'Coat'
 
 class 'Parent'
-method.bar = function (self) return 'bar' end
-method.baz = function (self) return 'baz' end
+function method:bar () return 'bar' end
+function method:baz () return 'baz' end
 
 class 'Child'
 extends 'Parent'
-override.bar = function (self) return 'BAR' end
+function override:bar () return 'BAR' end
 
 require 'Test.More'
 
 plan(14)
+
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 102.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
 
 p = Parent.new()
 ok( p:isa 'Parent', "Parent" )

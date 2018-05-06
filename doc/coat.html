@@ -2,9 +2,13 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>lua-Coat</title>
+  <title>Module Coat</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
+  <meta http-equiv="Language" content="en"/>
+  <meta http-equiv="Description" content="Module Coat"/>
+  <meta http-equiv="Keywords" content="lua, coat, class, after, around, before, can, does, extends, has, instance, isa, overload, override, method, new, singleton, type, with"/>
 </head>
 
 <body>
@@ -37,27 +41,38 @@
         <li><a href="index.html#license">License</a></li>
       </ul>
     </li>
-    <li><strong>The module <code>Coat</code></strong>
+    <li><strong>module <code>Coat</code></strong>
       <ul>
         <li><a href="coat.html#reference">Reference</a></li>
         <li><a href="coat.html#examples">Examples</a></li>
       </ul>
     </li>
-    <li><a href="meta.html">The module <code>Meta</code></a>
-      <ul>
-        <li><a href="meta.html#reference">Reference</a></li>
-      </ul>
-    </li>
-    <li><a href="role.html">The module <code>Role</code></a>
+    <li><a href="role.html">module <code>Coat.Role</code></a>
       <ul>
         <li><a href="role.html#reference">Reference</a></li>
         <li><a href="role.html#examples">Examples</a></li>
       </ul>
     </li>
-    <li><a href="types.html">The module <code>Types</code></a>
+    <li><a href="types.html">module <code>Coat.Types</code></a>
       <ul>
         <li><a href="types.html#reference">Reference</a></li>
         <li><a href="types.html#examples">Examples</a></li>
+      </ul>
+    </li>
+    <li><a href="meta_class.html">module <code>C.Meta.Class</code></a>
+      <ul>
+        <li><a href="meta_class.html#reference">Reference</a></li>
+      </ul>
+    </li>
+    <li><a href="meta_role.html">module <code>C.Meta.Role</code></a>
+      <ul>
+        <li><a href="meta_role.html#reference">Reference</a></li>
+      </ul>
+    </li>
+    <li><a href="uml.html">module <code>Coat.UML</code></a>
+      <ul>
+        <li><a href="uml.html#reference">Reference</a></li>
+        <li><a href="uml.html#examples">Examples</a></li>
       </ul>
     </li>
     <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
@@ -78,6 +93,10 @@
 <h4><code>class( modname )</code></h4>
 
 <p>Create a Coat class as a standard Lua module.</p>
+
+<h4><code>singleton( modname )</code></h4>
+
+<p>Create a Coat singleton class as a standard Lua module.</p>
 
 <h3>Functions in the <em>built Class</em></h3>
 
@@ -113,19 +132,16 @@ An item <code>'+'</code> allows overriding.</p>
 <p>The following options are available :</p>
 <ul>
   <li><code>builder</code> : function name </li>
-  <li><code>clearer</code> : function name </li>
   <li><code>coerce</code> : boolean </li>
   <li><code>default</code> : value or function </li>
   <li><code>does</code> : role name</li>
-  <li><code>handles</code> : table for method delegation</li>
+  <li><code>handles</code> : table or role for method delegation</li>
   <li><code>is</code> : string <code>(ro|rw)</code></li>
   <li><code>isa</code> : type name</li>
   <li><code>lazy</code> : boolean </li>
   <li><code>lazy_build</code> : boolean </li>
-  <li><code>reader</code> : function name </li>
   <li><code>required</code> : boolean </li>
   <li><code>trigger</code> : function </li>
-  <li><code>writer</code> : function name </li>
 </ul>
 
 <h4><code>isa( obj, t )</code> or <code>obj:isa( t )</code></h4>
@@ -150,6 +166,10 @@ An item <code>'+'</code> allows overriding.</p>
 
 <p>If exist, the user method <code>BUILD</code> is called at the end.</p>
 
+<h4><code>instance( args )</code></h4>
+
+<p>Alias of <code>new</code> for <code>singleton</code> class.</p>
+
 <h4><code>type( obj )</code> or <code>obj:type()</code></h4>
 
 <p>Returns the type of <code>obj</code>.</p>
@@ -172,11 +192,11 @@ class 'Point'
 has.x = { is = 'rw', isa = 'number', default = 0 }
 has.y = { is = 'rw', isa = 'number', default = 0 }
 
-overload.__tostring = function (self)
-    return '(' .. self:x() .. ', ' .. self:y() .. ')'
+function overload:__tostring ()
+    return '(' .. self.x .. ', ' .. self.y .. ')'
 end
 
-method.draw = function (self)
+function method:draw ()
     return "drawing " .. self._CLASS .. tostring(self)
 end
 </pre>
@@ -195,8 +215,8 @@ extends 'Point'
 
 has.z = {is = 'rw', isa = 'number', default = 0 }
 
-overload.__tostring = function(self)
-    return '(' .. self:x() .. ', ' .. self:y() .. ', ' .. self:z() .. ')'
+function overload:__tostring ()
+    return '(' .. self.x .. ', ' .. self.y .. ', ' .. self.z .. ')'
 end
 </pre>
 <pre class="example">

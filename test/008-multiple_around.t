@@ -4,31 +4,40 @@ require 'Coat'
 
 class 'Parent'
 
-method.orig = function (self, ...)
+function method:orig (...)
     local val = ...
     table.insert( _G.seen, 'orig : ' .. val )
+    return 1
 end
 
 class 'Child'
 extends 'Parent'
 
-around.orig = function (self, func, ...)
+function around:orig (func, ...)
     local val = ...
     table.insert( _G.seen, 'around 1 before : ' .. val)
-    func(self, ...)
+    local result = func(self, ...)
     table.insert( _G.seen, 'around 1 after' )
+    return result + 1
 end
 
-around.orig = function (self, func, ...)
+function around:orig (func, ...)
     local val = ...
     table.insert( _G.seen, 'around 2 before : ' .. val)
-    func(self, ...)
+    local result = func(self, ...)
     table.insert( _G.seen, 'around 2 after' )
+    return result + 1
 end
 
 require 'Test.More'
 
-plan(7)
+plan(8)
+
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 008.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
 
 p = Parent.new()
 ok( p:isa 'Parent', "Simple" )
@@ -42,7 +51,7 @@ ok( c:isa 'Child', "MultipleAround" )
 ok( c:isa 'Parent' )
 ok( c.orig )
 _G.seen = {}
-c:orig 'val'
+is( c:orig 'val', 3 )
 eq_array( _G.seen, {
         'around 2 before : val',
                 'around 1 before : val',

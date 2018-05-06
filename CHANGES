@@ -1,5 +1,20 @@
 Revision history for lua-Coat
 
+0.8.0  Wed Jan 20 21:30:00 2010
+	+ refactor with a more luaesque syntax (access to attribute)
+		NOT COMPATIBLE with previous versions
+		remove attributes : clearer, reader & writer
+	+ fix compatibility with Lua 5.2
+
+0.6.0  Sun Jan 17 16:30:00 2010
+	+ add singleton / instance
+	+ add module Coat.Meta.UML & utility coat2dot (Graphviz)
+	+ modifiers before/after don't handle return values of methods
+		(use modifier around for that)
+	+ option handles allows delegation of role
+	+ add parameterized type constraint
+	+ split Coat.Meta in Coat.Meta.Class & Coat.Meta.Role
+
 0.5.1  Fri Oct 16 10:30:00 2009
 	+ the standard function 'type' is no longer overloaded
 	+ use lua-TestMore (instead of lunity)

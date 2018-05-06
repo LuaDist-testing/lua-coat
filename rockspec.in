@@ -19,15 +19,20 @@ description = {
 }
 dependencies = {
     'lua >= 5.1',
-    'lua-TestMore >= 0.1.0',
+    'lua-testmore >= 0.1.0',
 }
 build = {
     type = 'builtin',
     modules = {
         ['Coat']                = 'src/Coat.lua',
-        ['Coat.Meta']           = 'src/Coat/Meta.lua',
+        ['Coat.Meta.Class']     = 'src/Coat/Meta/Class.lua',
+        ['Coat.Meta.Role']      = 'src/Coat/Meta/Role.lua',
         ['Coat.Role']           = 'src/Coat/Role.lua',
         ['Coat.Types']          = 'src/Coat/Types.lua',
+        ['Coat.UML']            = 'src/Coat/UML.lua',
+    },
+    install = {
+        bin = { 'src/coat2dot' }
     },
     copy_directories = { 'doc', 'test' },
 }

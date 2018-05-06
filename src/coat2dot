@@ -1,0 +1,24 @@
+#! /usr/bin/lua
+--
+-- lua-Coat : <http://lua-coat.luaforge.net/>
+--
+
+if #arg == 0 then
+    print "Usage: coat2dot module1 [module2, ...]"
+    os.exit(0)
+end
+
+local m = require 'Coat.UML'
+
+for _, v in ipairs(arg) do
+    require(v)
+end
+
+print(m.to_dot())
+
+--
+-- Copyright (c) 2009-2010 Francois Perrad
+--
+-- This program is licensed under the terms of the MIT/X11 license,
+-- like Lua itself.
+--

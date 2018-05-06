@@ -22,11 +22,17 @@ require 'Test.More'
 
 plan(8)
 
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 033.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
+
 foo = Four.new()
-is( foo:one(), 1, "attr" )
-is( foo:two(), 2 )
-is( foo:three(), 3 )
-is( foo:four(), 4 )
+is( foo.one, 1, "attr" )
+is( foo.two, 2 )
+is( foo.three, 3 )
+is( foo.four, 4 )
 
 ok( foo:isa 'One', "isa" )
 ok( foo:isa 'Two' )

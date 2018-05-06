@@ -5,12 +5,12 @@ role 'Breakable'
 
 has.is_broken = { is = 'rw', isa = 'boolean' }
 
-method._break = function (self)
-    self:is_broken(true)
+function method:_break ()
+    self.is_broken = true
     return "I broke"
 end
 
-class 'Car'
+singleton 'Car'
 with 'Breakable'
 
 has.engine = { is = 'ro', isa = 'Engine' }

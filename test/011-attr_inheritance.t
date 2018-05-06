@@ -24,38 +24,40 @@ extends( 'Bar', 'Biz' )
 
 require 'Test.More'
 
-plan(23)
+plan(19)
+
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 011.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
 
 foo = Foo.new()
 ok( foo:isa 'Foo', "Foo" )
-ok( foo.field_from_foo_string )
-ok( foo.field_from_foo_int )
-is( foo:field_from_foo_int(), 1 )
+is( foo.field_from_foo_string, nil )
+is( foo.field_from_foo_int, 1 )
 
 bar = Bar.new()
 ok( bar:isa 'Bar', "Bar" )
-ok( bar.field_from_foo_string )
-ok( bar.field_from_foo_int )
-ok( bar.field_from_bar )
-is( bar:field_from_foo_int(), 1 )
+is( bar.field_from_foo_string, nil )
+is( bar.field_from_bar, nil )
+is( bar.field_from_foo_int, 1 )
 
 baz = Baz.new()
 ok( baz:isa 'Baz', "Baz" )
-ok( baz.field_from_foo_string )
-ok( baz.field_from_foo_int )
-ok( baz.field_from_bar )
-ok( baz.field_from_baz )
-is( baz:field_from_foo_int(), 2 )
+is( baz.field_from_foo_string, nil )
+is( baz.field_from_bar, nil )
+is( baz.field_from_baz, nil )
+is( baz.field_from_foo_int, 2 )
 
 biz = Biz.new()
 ok( biz:isa 'Biz', "Biz" )
-ok( biz.field_from_biz )
+is( biz.field_from_biz, nil )
 
 bal = BalBaz.new()
 ok( bal:isa 'BalBaz', "BalBaz" )
-ok( bal.field_from_foo_string )
-ok( bal.field_from_foo_int )
-ok( bal.field_from_bar )
-ok( bal.field_from_biz )
-is( bal:field_from_foo_int(), 1 )
+is( bal.field_from_foo_string, nil )
+is( bal.field_from_bar, nil )
+is( bal.field_from_biz, nil )
+is( bal.field_from_foo_int, 1 )
 

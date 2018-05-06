@@ -10,22 +10,24 @@ local pairs = pairs
 local pcall = pcall
 local rawget = rawget
 local require = require
-local setfenv = setfenv
 local setmetatable = setmetatable
 local basic_type = type
 local _G = _G
+local debug = require 'debug'
 local package = package
 local string = string
 local table = table
 
 module 'Coat'
 
-local Meta = require 'Coat.Meta'
+local Meta = require 'Coat.Meta.Class'
 
 function type (obj)
     local t = basic_type(obj)
     if t == 'table' then
-        pcall(function () t = obj._CLASS or t end)
+        pcall(function ()
+                t = obj._CLASS or t
+              end)
     end
     return t
 end
@@ -124,11 +126,6 @@ end
 
 function new (class, args)
     args = args or {}
-    local obj = {
-        _CLASS = class._NAME,
-        _VALUES = {}
-    }
-    setmetatable(obj, {})
 
     for _, r in ipairs(class._ROLE) do -- check roles
         for _, v in ipairs(r._EXCL) do
@@ -143,11 +140,38 @@ function new (class, args)
         end
     end
 
+    local obj = {
+        _CLASS = class._NAME,
+        _VALUES = {}
+    }
+    local mt = {}
+    setmetatable(obj, mt)
     class._INIT(obj, args)
+    mt.__index = function (o, k)
+        local getter = '_get_' .. k
+        if class[getter] then
+            return class[getter](o)
+        else
+            return class[k]
+        end
+    end
+    mt.__newindex = function (o, k, v)
+        local setter = '_set_' .. k
+        if class[setter] then
+            class[setter](o, v)
+        else
+            error("Cannot set '" .. k .. "' (unknown)")
+        end
+    end
     if class.BUILD then
         class.BUILD(obj, args)
     end
     return obj
+end
+
+function instance (class, args)
+    class._INSTANCE = class._INSTANCE or new(class, args)
+    return class._INSTANCE
 end
 
 function __gc (class, obj)
@@ -182,7 +206,7 @@ local function validate (name, options, val)
     else
         if options.isa then
             if options.coerce then
-                local mapping = Types and Types._COERCE[options.isa]
+                local mapping = Types and Types.coercion_map(options.isa)
                 if not mapping then
                     error("Coercion is not available for type " .. options.isa)
                 end
@@ -193,7 +217,7 @@ local function validate (name, options, val)
             end
 
             local function check_isa (tname)
-                local tc = Types and Types._TC[tname]
+                local tc = Types and Types.find_type_constraint(tname)
                 if tc then
                     check_isa(tc.parent)
                     if not tc.validator(val) then
@@ -262,6 +286,9 @@ function has (class, name, options)
     options = options or {}
     checktype('has', 2, options, 'table')
 
+    if class[name] then
+        error("Overwrite definition of method " .. name)
+    end
     if options[1] == '+' then
         inherited = class._ATTR[name]
         if inherited == nil then
@@ -282,11 +309,6 @@ function has (class, name, options)
     if options.lazy_build then
         options.lazy = true
         options.builder = '_build_' .. name
-        if name:sub(1, 1) == '_' then
-            options.clearer = '_clear' .. name
-        else
-            options.clearer = 'clear_' .. name
-        end
     end
     if options.trigger and basic_type(options.trigger) ~= 'function' then
         error "The trigger option requires a function"
@@ -303,89 +325,92 @@ function has (class, name, options)
     class._ATTR[name] = options
 
     if options.is then
-        class[name] = function (obj, val)
-            if val ~= nil then
-                -- setter
-                if options.is == 'ro' then
-                    error("Cannot set a read-only attribute ("
-                          .. name .. ")")
-                else
-                    val = validate(name, options, val)
-                    obj._VALUES[name] = val
-                    local trigger = options.trigger
-                    if trigger then
-                        trigger(obj, val)
-                    end
-                    return val
-                end
+        class['_set_' .. name] = function (obj, val)
+            if options.is == 'ro' then
+                error("Cannot set a read-only attribute ("
+                      .. name .. ")")
             end
-            -- getter
-            if options.lazy and obj._VALUES[name] == nil then
-                local val = attr_default(options, obj)
-                val = validate(name, options, val)
-                obj._VALUES[name] = val
-            end
-            return obj._VALUES[name]
-        end
-    end
-
-    if options.reader then
-        class[options.reader] = function (obj)
-            if options.lazy and obj._VALUES[name] == nil then
-                local val = attr_default(options, obj)
-                val = validate(name, options, val)
-                obj._VALUES[name] = val
-                end
-            return obj._VALUES[name]
-        end
-    end
-
-    if options.writer then
-        class[options.writer] = function (obj, val)
             val = validate(name, options, val)
-            obj._VALUES[name] = val
+            rawget(obj, '_VALUES')[name] = val
             local trigger = options.trigger
             if trigger then
                 trigger(obj, val)
             end
             return val
         end
+
+        class['_get_' .. name] = function (obj)
+            local t = rawget(obj, '_VALUES')
+            if options.lazy and t[name] == nil then
+                local val = attr_default(options, obj)
+                val = validate(name, options, val)
+                t[name] = val
+            end
+            return t[name]
+        end
     end
 
     if options.handles then
-        for k, v in pairs(options.handles) do
-            class[k] = function (obj, ...)
-                local attr = obj._VALUES[name]
-                local func = attr[v]
-                if func == nil then
-                    error("Cannot delegate " .. k .. " from "
-                          .. name .. " (" .. v .. ")")
+        if basic_type(options.handles) == 'table' and not options.handles._NAME then
+            for k, v in pairs(options.handles) do
+                local meth = k
+                if basic_type(meth) == 'number' then
+                    meth = v
                 end
-                return func(attr, ...)
+                if class[meth] then
+                    error("Duplicate definition of method " .. meth)
+                end
+                class[meth] = function (obj, ...)
+                    local attr = rawget(obj, '_VALUES')[name]
+                    local func = attr[v]
+                    if func == nil then
+                        error("Cannot delegate " .. meth .. " from "
+                              .. name .. " (" .. v .. ")")
+                    end
+                    return func(attr, ...)
+                end -- delegate
             end
-        end
-    end
-
-    if options.clearer then
-        if options.required then
-            error "The clearer option is incompatible with required option"
-        end
-        if basic_type(options.clearer) ~= 'string' then
-            error "The clearer option requires a string"
-        end
-        class[options.clearer] = function (obj)
-            obj._VALUES[name] = nil
-            local trigger = options.trigger
-            if trigger then
-                trigger(obj, nil)
+        else
+            local role
+            if basic_type(options.handles) == 'string' then
+                role = require(options.handles)
+            elseif options.handles._NAME then
+                role = options.handles
             end
+            if not role or role._INIT then
+                error "The handles option requires a table or a Role"
+            end
+            if options.does ~= role._NAME then
+                error "The handles option requires a does option with the same role"
+            end
+            for _, v in ipairs(role._STORE) do
+                if v[1] == 'method' then
+                    local meth = v[2]
+                    if class[meth] then
+                        error("Duplicate definition of method " .. meth)
+                    end
+                    class[meth] = function (obj, ...)
+                        local attr = rawget(obj, '_VALUES')[name]
+                        local func = attr[meth]
+                        if func == nil then
+                            error("Cannot delegate " .. meth .. " from "
+                                  .. name .. " (" .. meth .. ")")
+                        end
+                        return func(attr, ...)
+                    end -- delegate
+                end
+            end
+            table.insert(class._DOES, role._NAME)
         end
-    end
+    end -- options.handles
 end
 
 function method (class, name, func)
     checktype('method', 1, name, 'string')
     checktype('method', 2, func, 'function')
+    if class._ATTR[name] then
+        error("Overwrite definition of attribute " .. name)
+    end
     if class[name] then
         error("Duplicate definition of method " .. name)
     end
@@ -418,9 +443,8 @@ function before (class, name, func)
     end
 
     class[name] = function (...)
-        local result = func(...)
+        func(...)
         super(...)
-        return result
     end
 end
 
@@ -449,7 +473,7 @@ function after (class, name, func)
 
     class[name] = function (...)
         super(...)
-        return func(...)
+        func(...)
     end
 end
 
@@ -480,32 +504,41 @@ function extends(class, ...)
 
     local t = getmetatable(class)
     t.__index = function (t, k)
-                    local function search ()
-                        for _, p in ipairs(class._PARENT) do
-                            local v = p[k]
+                    local function search (cl)
+                        for _, p in ipairs(cl._PARENT) do
+                            local v = rawget(p, k) or search(p)
                             if v then
                                 return v
                             end
                         end
                     end -- search
 
-                    local v = rawget(t, k) or search()
-                    t[k] = v      -- save for next access
+                    local v = rawget(t, k)
+                    if v == nil then
+                        v = search(class)
+                        t[k] = v      -- save for next access
+                    end
+                    if v == nil then
+                        v = _G[k]
+                    end
                     return v
                 end
     local a = getmetatable(class._ATTR)
     a.__index = function (t, k)
-                    local function search ()
-                        for _, p in ipairs(class._PARENT) do
-                            local v = p._ATTR[k]
+                    local function search (cl)
+                        for _, p in ipairs(cl._PARENT) do
+                            local v = rawget(p._ATTR, k) or search(p)
                             if v then
                                 return v
                             end
                         end
                     end -- search
 
-                    local v = rawget(t, k) or search()
-                    t[k] = v      -- save for next access
+                    local v = rawget(t, k)
+                    if v == nil then
+                        v = search(class)
+                        t[k] = v      -- save for next access
+                    end
                     return v
                 end
 end
@@ -561,30 +594,33 @@ function with (class, ...)
     end
 end
 
-function _G.class (modname)
-    checktype('class', 1, modname, 'string')
+function module (modname, level)
     if basic_type(package.loaded[modname]) == 'table' then
         error("name conflict for module '" .. modname .. "'")
     end
 
     local M = findtable(modname)
     package.loaded[modname] = M
+    M._NAME = modname
+    M._M = M
+    debug.setfenv(debug.getinfo(level, 'f').func, M)
+    return M
+end
+
+local function _class (modname)
+    local M = module(modname, 4)
     setmetatable(M, {
         __index = _G,
         __call  = function (t, ...)
                       return t.new(...)
                   end,
     })
-    setfenv(2, M)
-    M._NAME = modname
-    M._M = M
     M._ISA = { modname }
     M._PARENT = {}
     M._DOES = {}
     M._ROLE = {}
     M._MT = { __index = M }
-    M._ATTR = {}
-    setmetatable(M._ATTR, {})
+    M._ATTR = setmetatable({}, {})
     M.type = type
     M.can = can
     M.isa = isa
@@ -603,11 +639,24 @@ function _G.class (modname)
     M.with = function (...) return with(M, ...) end
     local classes = Meta.classes()
     classes[modname] = M
+    return M
 end
 
-_VERSION = "0.5.1"
+function _G.class (modname)
+    checktype('class', 1, modname, 'string')
+    _class(modname)
+end
+
+function _G.singleton (modname)
+    checktype('singleton', 1, modname, 'string')
+    local M = _class(modname)
+    M.instance = function (...) return instance(M, ...) end
+    M.new = M.instance
+end
+
+_VERSION = "0.8.0"
 _DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
-_COPYRIGHT = "Copyright (c) 2009 Francois Perrad"
+_COPYRIGHT = "Copyright (c) 2009-2010 Francois Perrad"
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

@@ -1,17 +1,17 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'lua-Coat'
-version = '0.5.1-2'
+version = '0.8.0-1'
 -- LuaDist source
 source = {
-  tag = "0.5.1-2",
+  tag = "0.8.0-1",
   url = "git://github.com/LuaDist-testing/lua-coat.git"
 }
 -- Original source
 -- source = {
---     url = 'http://cloud.github.com/downloads/fperrad/lua-Coat/lua-coat-0.5.1.tar.gz',
---     md5 = '10fcadedff41b1666ef91fcb69a4ff6a',
---     dir = 'lua-Coat-0.5.1',
+--     url = 'http://cloud.github.com/downloads/fperrad/lua-Coat/lua-coat-0.8.0.tar.gz',
+--     md5 = 'ac7d3c1811b88d399dfeb82276082b53',
+--     dir = 'lua-Coat-0.8.0',
 -- }
 description = {
     summary = "Yet Another Lua Object-Oriented Model",
@@ -33,9 +33,14 @@ build = {
     type = 'builtin',
     modules = {
         ['Coat']                = 'src/Coat.lua',
-        ['Coat.Meta']           = 'src/Coat/Meta.lua',
+        ['Coat.Meta.Class']     = 'src/Coat/Meta/Class.lua',
+        ['Coat.Meta.Role']      = 'src/Coat/Meta/Role.lua',
         ['Coat.Role']           = 'src/Coat/Role.lua',
         ['Coat.Types']          = 'src/Coat/Types.lua',
+        ['Coat.UML']            = 'src/Coat/UML.lua',
+    },
+    install = {
+        bin = { 'src/coat2dot' }
     },
     copy_directories = { 'doc', 'test' },
 }

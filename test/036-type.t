@@ -17,31 +17,51 @@ require 'Test.More'
 
 plan(18)
 
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 036.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
+
 foo = A()
-is( foo:a(A()):type(), 'A', "A" )
-is( foo:a(B()):type(), 'B' )
-is( foo:a(C()):type(), 'C' )
+foo.a = A()
+is( foo.a:type(), 'A', "A" )
+foo.a = B()
+is( foo.a:type(), 'B' )
+foo.a = C()
+is( foo.a:type(), 'C' )
 
 foo = B()
-is( foo:a(A()):type(), 'A', "B" )
-is( foo:a(B()):type(), 'B' )
-is( foo:a(C()):type(), 'C' )
-error_like([[local foo = B(); foo:b(A())]],
+foo.a = A()
+is( foo.a:type(), 'A', "B" )
+foo.a = B()
+is( foo.a:type(), 'B' )
+foo.a = C()
+is( foo.a:type(), 'C' )
+error_like([[local foo = B(); foo.b = A()]],
            "^[^:]+:%d+: Invalid type for attribute 'b' %(got A, expected B%)")
-is( foo:b(B()):type(), 'B' )
-is( foo:b(C()):type(), 'C' )
+foo.b = B()
+is( foo.b:type(), 'B' )
+foo.b = C()
+is( foo.b:type(), 'C' )
 
 foo = C()
-is( foo:a(A()):type(), 'A', "C" )
-is( foo:a(B()):type(), 'B' )
-is( foo:a(C()):type(), 'C' )
-error_like([[local foo = C(); foo:b(A())]],
+foo.a = A()
+is( foo.a:type(), 'A', "C" )
+foo.a = B()
+is( foo.a:type(), 'B' )
+foo.a = C()
+is( foo.a:type(), 'C' )
+error_like([[local foo = C(); foo.b = A()]],
            "^[^:]+:%d+: Invalid type for attribute 'b' %(got A, expected B%)")
-is( foo:b(B()):type(), 'B' )
-is( foo:b(C()):type(), 'C' )
-error_like([[local foo = C(); foo:c(A())]],
+foo.b = B()
+is( foo.b:type(), 'B' )
+foo.b = C()
+is( foo.b:type(), 'C' )
+error_like([[local foo = C(); foo.c = A()]],
            "^[^:]+:%d+: Invalid type for attribute 'c' %(got A, expected C%)")
-error_like([[local foo = C(); foo:c(B())]],
+error_like([[local foo = C(); foo.c = B()]],
            "^[^:]+:%d+: Invalid type for attribute 'c' %(got B, expected C%)")
-is( foo:c(C()):type(), 'C' )
+foo.c = C()
+is( foo.c:type(), 'C' )
 

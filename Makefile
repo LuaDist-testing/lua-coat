@@ -1,5 +1,6 @@
 
-VERSION := $(shell cd src && lua -e "require [[Coat]]; print(Coat._VERSION)")
+LUA     := lua
+VERSION := $(shell cd src && $(LUA) -e "require [[Coat]]; print(Coat._VERSION)")
 TARBALL := lua-coat-$(VERSION).tar.gz
 ifndef REV
   REV   := 1
@@ -59,15 +60,16 @@ rockspec: $(TARBALL)
 	perl -e '$(rockspec_pl)' rockspec.in > rockspec/lua-coat-$(VERSION)-$(REV).rockspec
 
 export LUA_PATH=;;./src/?.lua;./test/?.lua
+#export GEN_PNG=1
 
 test:
-	@prove --exec=lua test/*.t
+	prove --exec=$(LUA) test/*.t
 
 html:
 	xmllint --noout --valid doc/*.html
 
 clean:
-	rm -f MANIFEST *.bak
+	rm -f MANIFEST *.bak *.png test/*.png
 
 .PHONY: test rockspec CHANGES
 

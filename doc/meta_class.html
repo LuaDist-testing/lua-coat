@@ -2,13 +2,13 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Module Coat.Types</title>
+  <title>Module Coat.Meta.Class</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
   <meta http-equiv="Language" content="en"/>
-  <meta http-equiv="Description" content="Module Coat.Types"/>
-  <meta http-equiv="Keywords" content="lua, coat, types, coerce, enum, subtype"/>
+  <meta http-equiv="Description" content="Module Coat.Meta.Class"/>
+  <meta http-equiv="Keywords" content="lua, coat, meta, class, attributes, classes, has, methods, metamethods, parents, roles"/>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 <div id="main">
 
 <div id="navigation">
-<h1>Coat.Types</h1>
+<h1>Coat.Meta</h1>
   <ul>
     <li><a href="index.html">Home</a>
       <ul>
@@ -53,13 +53,13 @@
         <li><a href="role.html#examples">Examples</a></li>
       </ul>
     </li>
-    <li><strong>module <code>Coat.Types</code></strong>
+    <li><a href="types.html">module <code>Coat.Types</code></a>
       <ul>
         <li><a href="types.html#reference">Reference</a></li>
         <li><a href="types.html#examples">Examples</a></li>
       </ul>
     </li>
-    <li><a href="meta_class.html">module <code>C.Meta.Class</code></a>
+    <li><strong>module <code>C.Meta.Class</code></strong>
       <ul>
         <li><a href="meta_class.html#reference">Reference</a></li>
       </ul>
@@ -88,70 +88,40 @@
 
 <h2><a name="reference"></a>References</h2>
 
-<p>This module provides the ability to create constrained type
-and parametrized type which are used in attribute definition.</p>
+<h3>Functions</h3>
 
-<p>All functions are stored in a global space.</p>
+<h4><code>Coat.Meta.Class.attributes( class )</code></h4>
 
-<h3>Global Functions</h3>
+<p>Returns a generator of couple <code>(name, attr)</code> for <code>class</code>.</p>
 
-<h4><code>coerce.type = { from = via [, from = via, ...] }</code></h4>
+<h4><code>Coat.Meta.Class.class( modname )</code></h4>
 
-<p>Declares the <code>type</code> coerce from the type named <code>from</code>
-via a function <code>via</code>.</p>
+<p>Returns the Coat class <code>modname</code> or nil.</p>
 
-<h4><code>enum.name = { string1, string2 [, ...] }</code></h4>
+<h4><code>Coat.Meta.Class.classes()</code></h4>
 
-<p>Creates a subtype <code>name</code> for a given set of strings.</p>
+<p>Returns a table with all Coat classes.</p>
 
-<h4><code>subtype.name = { as = parent, where = validator [, message = msg ] }</code></h4>
+<h4><code>Coat.Meta.Class.has( class, name )</code></h4>
 
-<p>Creates a subtype <code>name</code> from the type <code>parent</code>
-which passes the constraint specified in the function <code>validator</code>,
-the optional <code>msg</code> is used as error message.</p>
+<p>Returns the table of options of the attribute <code>name</code>
+in the class <code>class</code> or nil.</p>
 
-<h2><a name="examples"></a>Examples</h2>
+<h4><code>Coat.Meta.Class.methods( class )</code></h4>
 
-<h3>Constrained Types</h3>
+<p>Returns a generator of couple <code>(name, method)</code> for <code>class</code>.</p>
 
-<pre class="example">
-require 'Coat.Types'
+<h4><code>Coat.Meta.Class.metamethods( class )</code></h4>
 
-subtype.Natural = {
-    as = 'number',
-    where = function (val) return val > 0 end,
-}
+<p>Returns a generator of couple <code>(name, metamethod)</code> for <code>class</code>.</p>
 
-subtype.NaturalLessThanTen = {
-    as = 'Natural',
-    where = function (val) return val &lt; 10 end,
-    message = "This number (%d) is not less than ten!",
-}
+<h4><code>Coat.Meta.Class.parents( class )</code></h4>
 
-enum.Colour = { 'Red', 'Green', 'Blue' }
+<p>Returns a generator of couple <code>(name, parent)</code> for <code>class</code>.</p>
 
-subtype.DateTime = {
-    as = 'string',
-    where = function (val) return true end,
-}
+<h4><code>Coat.Meta.Class.roles( class )</code></h4>
 
-coerce.DateTime = {
-    number = function (val) return os.date("!%d/%m/%Y %H:%M:%S", val) end
-}
-</pre>
-
-<h3>Parametrized Types</h3>
-
-<pre class="example">
-require 'Coat.Types'
-
-class 'A'
-
-has.array_of_str = { is = 'rw', isa = 'table&lt;string&gt;' }
-has.hash_of_a = { is = 'rw', isa = 'table&lt;string,A&gt;' }
-has.hash_of_num = { is = 'rw', isa = 'table&lt;string,number&gt;' }
-has.many_a = { is = 'rw', isa = 'table&lt;A&gt;' }
-</pre>
+<p>Returns a generator of couple <code>(name, role)</code> for <code>class</code>.</p>
 
 </div> <!-- id="content" -->
 

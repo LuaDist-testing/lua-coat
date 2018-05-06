@@ -10,7 +10,7 @@ end
 
 method.m1 = m1
 
-method.m2 = function (self)
+function method:m2 ()
     return m1(self) .. "m2"
 end
 
@@ -28,6 +28,12 @@ with( 'Foo', { alias = { m1 = 'foo_m1', m2 = 'foo_m2' },
 require 'Test.More'
 
 plan(19)
+
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 205.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
 
 a = A.new()
 ok( a:isa 'A', "A" )

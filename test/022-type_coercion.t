@@ -19,13 +19,19 @@ require 'Test.More'
 
 plan(5)
 
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 022.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
+
 foo = Record{ timestamp = 'now' }
 ok( foo:isa 'Record', "direct" )
-is( foo:timestamp(), 'now' )
+is( foo.timestamp, 'now' )
 
 foo = Record{ timestamp = 0 }
 ok( foo:isa 'Record', "coercion" )
-is( foo:timestamp(), '01/01/1970 00:00:00' )
+is( foo.timestamp, '01/01/1970 00:00:00' )
 
 error_like([[foo = Record{ timestamp = true }]],
            "^[^:]+:%d+: Invalid type for attribute 'timestamp' %(got boolean, expected string%)",

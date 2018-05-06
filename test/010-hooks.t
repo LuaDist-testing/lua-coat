@@ -4,40 +4,46 @@ require 'Coat'
 
 class 'Parent'
 
-method.pushelem = function (self, elem)
+function method:pushelem (elem)
     table.insert( _G.list, elem )
 end
 
 class 'Child'
 extends 'Parent'
 
-before.pushelem = function (self, elem)
+function before:pushelem (elem)
     table.insert( _G.list, 'before1:' .. elem )
 end
 
-before.pushelem = function (self, elem)
+function before:pushelem (elem)
     table.insert( _G.list, 'before2:' .. elem )
 end
 
-after.pushelem = function (self, elem)
+function after:pushelem (elem)
     table.insert( _G.list, 'after1:' .. elem )
 end
 
-before.pushelem = function (self, elem)
+function before:pushelem (elem)
     table.insert( _G.list, 'before3:' .. elem )
 end
 
-after.pushelem = function (self, elem)
+function after:pushelem (elem)
     table.insert( _G.list, 'after2:' .. elem )
 end
 
-after.pushelem = function (self, elem)
+function after:pushelem (elem)
     table.insert( _G.list, 'after3:' .. elem )
 end
 
 require 'Test.More'
 
 plan(7)
+
+if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
+    local f = io.popen("dot -T png -o 010.png", 'w')
+    f:write(require 'Coat.UML'.to_dot())
+    f:close()
+end
 
 p = Parent.new()
 ok( p:isa 'Parent', "Simple" )
