@@ -1,5 +1,9 @@
 Revision history for lua-Coat
 
+0.9.0  Sun Oct  6 19:30:00 2013
+	+ fix issue#1
+	+ add anonymous class/role
+
 0.8.6  Sat Mar  3 22:30:00 2012
 	+ work with Lua 5.2.0 (__pairs supported)
 	+ add LuaDist support

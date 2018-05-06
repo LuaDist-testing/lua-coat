@@ -2,6 +2,8 @@
 lua-Coat : Yet Another Lua Object-Oriented Model
 ================================================
 
+[![Build Status](https://travis-ci.org/fperrad/lua-Coat.png)](https://travis-ci.org/fperrad/lua-Coat)
+
 Introduction
 ------------
 
@@ -17,13 +19,13 @@ powerful and flexible part of lua-Coat.
 Links
 -----
 
-The homepage is at [http://fperrad.github.com/lua-Coat](http://fperrad.github.com/lua-Coat),
+The homepage is at [http://fperrad.github.io/lua-Coat](http://fperrad.github.io/lua-Coat),
 and the sources are hosted at [http://github.com/fperrad/lua-Coat](http://github.com/fperrad/lua-Coat).
 
 Copyright and License
 ---------------------
 
-Copyright (c) 2009-2012 Francois Perrad
+Copyright (c) 2009-2013 Francois Perrad
 
 This library is licensed under the terms of the MIT/X11 license, like Lua itself.
 

@@ -1,6 +1,6 @@
 
 --
--- lua-Coat : <http://fperrad.github.com/lua-Coat/>
+-- lua-Coat : <http://fperrad.github.io/lua-Coat/>
 --
 
 _ENV = nil

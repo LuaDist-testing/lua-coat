@@ -82,7 +82,7 @@
         <li><a href="mock.html">Mock</a></li>
       </ul>
     </li>
-    <li><a href="http://luaforge.net/projects/lua-coat/">Project</a>
+    <li><a href="http://fperrad.github.io/lua-Coat/">Project</a>
       <ul>
         <li><a href="http://github.com/fperrad/lua-Coat/">Git</a></li>
         <li><script type="text/javascript" src="http://www.ohloh.net/p/359564/widgets/project_thin_badge.js"></script></li>
@@ -128,10 +128,10 @@ digraph {
     node [shape=record];
 
     "Point"
-        [label="{\N|y, is rw, isa number\lx, is rw, isa number\l|__tostring()\ldraw()\l}"];
+        [label="{\N|x : number\ly : number\l|__tostring()\ldraw()\l}"];
 
     "Point3D"
-        [label="{\N|z, is rw, isa number\l|__tostring()\l}"];
+        [label="{\N|z : number\l|__tostring()\l}"];
     "Point3D" -> "Point" // extends
         [arrowhead = onormal, arrowtail = none, arrowsize = 2.0];
 

@@ -1,10 +1,8 @@
 CHANGES
-CMakeLists.txt
 COPYRIGHT
 MANIFEST
 Makefile
 README.md
-dist.cmake
 dist.info
 doc/Makefile
 doc/Point3D.png
@@ -70,6 +68,8 @@ test/141-file.t
 test/151-inject.t
 test/161-memoize.t
 test/171-mock.t
+test/181-meta.t
+test/182-anon.t
 test/201-role_requires_meth.t
 test/202-role_meth_modifier.t
 test/203-attr_does.t

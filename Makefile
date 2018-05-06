@@ -2,30 +2,27 @@
 LUA     := lua
 VERSION := $(shell cd src && $(LUA) -e "m = require [[Coat]]; print(m._VERSION)")
 TARBALL := lua-coat-$(VERSION).tar.gz
-ifndef REV
-  REV   := 1
-endif
+REV     := 1
 
 LUAVER  := 5.1
 PREFIX  := /usr/local
 DPREFIX := $(DESTDIR)$(PREFIX)
 BINDIR  := $(DPREFIX)/bin
 LIBDIR  := $(DPREFIX)/share/lua/$(LUAVER)
+INSTALL := install
 
-all: dist.cmake
+all:
 	@echo "Nothing to build here, you can just make install"
 
 install:
-	mkdir -p $(BINDIR)
-	cp src/coat2dot                 $(BINDIR)
-	mkdir -p $(LIBDIR)/Coat/Meta
-	cp src/Coat.lua                 $(LIBDIR)
-	cp src/Coat/Role.lua            $(LIBDIR)/Coat
-	cp src/Coat/Types.lua           $(LIBDIR)/Coat
-	cp src/Coat/UML.lua             $(LIBDIR)/Coat
-	cp src/Coat/file.lua            $(LIBDIR)/Coat
-	cp src/Coat/Meta/Class.lua      $(LIBDIR)/Coat/Meta
-	cp src/Coat/Meta/Role.lua       $(LIBDIR)/Coat/Meta
+	$(INSTALL) -m 755 -D src/coat2dot                       $(BINDIR)/coat2dot
+	$(INSTALL) -m 644 -D src/Coat.lua                       $(LIBDIR)/Coat.lua
+	$(INSTALL) -m 644 -D src/Coat/Role.lua                  $(LIBDIR)/Coat/Role.lua
+	$(INSTALL) -m 644 -D src/Coat/Types.lua                 $(LIBDIR)/Coat/Types.lua
+	$(INSTALL) -m 644 -D src/Coat/UML.lua                   $(LIBDIR)/Coat/UML.lua
+	$(INSTALL) -m 644 -D src/Coat/file.lua                  $(LIBDIR)/Coat/file.lua
+	$(INSTALL) -m 644 -D src/Coat/Meta/Class.lua            $(LIBDIR)/Coat/Meta/Class.lua
+	$(INSTALL) -m 644 -D src/Coat/Meta/Role.lua             $(LIBDIR)/Coat/Meta/Role.lua
 
 uninstall:
 	rm -f $(BINDIR)/coat2dot
@@ -84,10 +81,7 @@ tag:
 doc:
 	git read-tree --prefix=doc/ -u remotes/origin/gh-pages
 
-dist.cmake:
-	wget https://raw.github.com/LuaDist/luadist/master/dist.cmake
-
-MANIFEST: doc dist.cmake
+MANIFEST: doc
 	git ls-files | perl -e '$(manifest_pl)' > MANIFEST
 
 $(TARBALL): MANIFEST
@@ -133,7 +127,6 @@ clean:
 	rm -f MANIFEST *.bak src/luacov.*.out src/*.png test/*.png *.rockspec README.html
 
 realclean: clean
-	rm -f dist.cmake
 
 .PHONY: test rockspec CHANGES dist.info
 

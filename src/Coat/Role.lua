@@ -1,6 +1,6 @@
 
 --
--- lua-Coat : <http://fperrad.github.com/lua-Coat/>
+-- lua-Coat : <http://fperrad.github.io/lua-Coat/>
 --
 
 local setmetatable = setmetatable
@@ -11,6 +11,7 @@ local Meta = require 'Coat.Meta.Role'
 local basic_type = type
 local checktype = Coat.checktype
 local module = Coat.module
+local setfenv = Coat.setfenv
 
 _ENV = nil
 local _M = {}
@@ -51,9 +52,8 @@ local function excludes (role, ...)
 end
 _M.excludes = excludes
 
-function _G.role (modname)
-    checktype('role', 1, modname, 'string')
-    local M = module(modname, 3)
+local function role (modname)
+    local M = module(modname)
     setmetatable(M, { __index = _G })
     M._STORE = {}
     M._REQ = {}
@@ -62,13 +62,20 @@ function _G.role (modname)
     M.method = setmetatable({}, { __newindex = function (t, k, v) method(M, k, v) end })
     M.requires = function (...) return requires(M, ...) end
     M.excludes = function (...) return excludes(M, ...) end
-    local roles = Meta.roles()
-    roles[modname] = M
+    Meta.roles()[M._NAME] = M
+    return M
+end
+_M.role = role
+
+function _G.role (modname)
+    checktype('role', 1, modname, 'string')
+    local M = role(modname)
+    setfenv(2, M)
 end
 
 return _M
 --
--- Copyright (c) 2009-2010 Francois Perrad
+-- Copyright (c) 2009-2013 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

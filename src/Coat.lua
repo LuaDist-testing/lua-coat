@@ -1,6 +1,6 @@
 
 --
--- lua-Coat : <http://fperrad.github.com/lua-Coat/>
+-- lua-Coat : <http://fperrad.github.io/lua-Coat/>
 --
 
 local basic_error = error
@@ -43,6 +43,7 @@ if _G._VERSION == 'Lua 5.2' then
         end
     end
 end
+_M.setfenv = setfenv
 
 local function type (obj)
     local t = basic_type(obj)
@@ -447,6 +448,9 @@ local function has (class, name, options)
     if options.builder and basic_type(options.builder) ~= 'string' then
         error "The builder option requires a string (method name)"
     end
+    if options.builder then
+        options.lazy = true
+    end
     class._ATTR[name] = options
 
     if options.is then
@@ -820,7 +824,14 @@ local function with (class, ...)
 end
 _M.with = with
 
-local function module (modname, level)
+local anon_id = 0
+local function get_anon_id ()
+    anon_id = anon_id + 1
+    return '_ANON_' .. anon_id
+end
+
+local function module (modname)
+    modname = modname or get_anon_id()
     if basic_type(loaded[modname]) == 'table' then
         error("name conflict for module '" .. modname .. "'")
     end
@@ -842,20 +853,19 @@ local function module (modname, level)
     loaded[modname] = M
     M._NAME = modname
     M._M = M
-    setfenv(level, M)
     return M
 end
 _M.module = module
 
-local function _class (modname)
-    local M = module(modname, 4)
+local function class (modname)
+    local M = module(modname)
     setmetatable(M, {
         __index = _G,
         __call  = function (t, ...)
                       return t.new(...)
                   end,
     })
-    M._ISA = { modname }
+    M._ISA = { M._NAME }
     M._PARENT = {}
     M._DOES = {}
     M._ROLE = {}
@@ -883,28 +893,30 @@ local function _class (modname)
     M.extends = function (...) return extends(M, ...) end
     M.with = function (...) return with(M, ...) end
     M.memoize = function (name) return memoize(M, name) end
-    local classes = Meta.classes()
-    classes[modname] = M
+    Meta.classes()[M._NAME] = M
     return M
 end
-_M._class = _class
+_M.class = class
 
 function _G.class (modname)
     checktype('class', 1, modname, 'string')
-    _class(modname)
+    local M = class(modname)
+    setfenv(2, M)
 end
 
 function _G.singleton (modname)
     checktype('singleton', 1, modname, 'string')
-    local M = _class(modname)
+    local M = class(modname)
     M.instance = function (...) return instance(M, ...) end
     M.new = M.instance
+    setfenv(2, M)
 end
 
 function _G.abstract (modname)
     checktype('abstract', 1, modname, 'string')
-    local M = _class(modname)
+    local M = class(modname)
     M.new = function () error("Cannot instanciate an abstract class " .. modname) end
+    setfenv(2, M)
 end
 
 function _G.augment (class)
@@ -920,9 +932,9 @@ function _G.augment (class)
     setfenv(2, M)
 end
 
-_M._VERSION = "0.8.6"
+_M._VERSION = "0.9.0"
 _M._DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
-_M._COPYRIGHT = "Copyright (c) 2009-2012 Francois Perrad"
+_M._COPYRIGHT = "Copyright (c) 2009-2013 Francois Perrad"
 return _M
 --
 -- This library is licensed under the terms of the MIT/X11 license,
