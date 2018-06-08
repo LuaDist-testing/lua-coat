@@ -36,7 +36,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = ServiceImpl1()
+local foo = ServiceImpl1()
 ok( foo:isa 'ServiceImpl1', "ServiceImpl1" )
 ok( foo:isa 'Service' )
 ok( foo.logger:isa 'Logger' )

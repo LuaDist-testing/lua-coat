@@ -1,5 +1,10 @@
 Revision history for lua-Coat
 
+0.9.2  Sat Jan 20 19:30:00 2018
+	+ shadow _ENV
+	+ UML generation : refactor layout
+	+ add Debian package infrastructure
+
 0.9.1  Sun Nov  2 20:30:00 2014
 	+ compat with Lua 5.3
 

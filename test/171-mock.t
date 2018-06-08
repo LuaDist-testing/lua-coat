@@ -22,7 +22,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-r = Rect{ x = 2, y = 4 }
+local r = Rect{ x = 2, y = 4 }
 is( r:type(), 'Rect', "Rect" )
 ok( r:isa 'Rect' )
 is( r:getArea(), 8, "area" )
@@ -30,7 +30,7 @@ is( r:getArea(), 8, "area" )
 r:mock('getArea', function () return 42 end)
 is( r:getArea(), 42, "mocked area" )
 
-rr = Rect{ x = 3, y = 3 }
+local rr = Rect{ x = 3, y = 3 }
 is( rr:getArea(), 9, "not mocked area" )
 
 r:unmock 'getArea'

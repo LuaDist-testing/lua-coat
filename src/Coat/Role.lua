@@ -8,12 +8,11 @@ local _G = _G
 local Coat = require 'Coat'
 local Meta = require 'Coat.Meta.Role'
 
-local basic_type = type
 local checktype = Coat.checktype
 local module = Coat.module
 local setfenv = Coat.setfenv
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local function has (role, name, options)
@@ -62,7 +61,7 @@ local function role (modname)
     M.method = setmetatable({}, { __newindex = function (t, k, v) method(M, k, v) end })
     M.requires = function (...) return requires(M, ...) end
     M.excludes = function (...) return excludes(M, ...) end
-    Meta.roles()[M._NAME] = M
+    Meta.add_role(M._NAME, M)
     return M
 end
 _M.role = role
@@ -75,7 +74,7 @@ end
 
 return _M
 --
--- Copyright (c) 2009-2013 Francois Perrad
+-- Copyright (c) 2009-2018 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

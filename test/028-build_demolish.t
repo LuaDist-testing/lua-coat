@@ -44,9 +44,9 @@ end
 
 _G.REG = {}
 
-expected = { "BUILD A" }
+local expected = { "BUILD A" }
 _G.REG.A = {}
-a = A{ id = 1 }
+local a = A{ id = 1 }
 ok( a:isa 'A', "A" )
 eq_array( a.buffer, expected )
 a:__gc()  -- manual
@@ -57,7 +57,7 @@ eq_array( _G.REG.A[1], expected )
 expected = { "BUILD A", "BUILD B" }
 _G.REG.A = {}
 _G.REG.B = {}
-b = B{ id = 2 }
+local b = B{ id = 2 }
 ok( b:isa 'B', "B" )
 ok( b:isa 'A' )
 eq_array( b.buffer, expected )

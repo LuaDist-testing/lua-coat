@@ -15,7 +15,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = Point3D{x = 1, y = 2, z = 3}
+local a = Point3D{x = 1, y = 2, z = 3}
 is( a:type(), 'Point3D', "new" )
 ok( a:isa 'Point3D' )
 ok( a:isa 'Point' )

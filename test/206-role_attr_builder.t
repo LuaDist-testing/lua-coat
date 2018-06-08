@@ -32,7 +32,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-c = Red.new()
+local c = Red.new()
 ok( c:isa 'Red', "Red" )
 is( c.color, 'red' )
 

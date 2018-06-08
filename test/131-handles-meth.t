@@ -23,7 +23,7 @@ end
 
 _G.seen = ''
 
-car = Car.new{ engine = Engine.new() }
+local car = Car.new{ engine = Engine.new() }
 ok( car:isa 'Car', "isa Car" )
 ok( car.engine:isa 'Engine' )
 ok( car:can '_break', "can _break" )

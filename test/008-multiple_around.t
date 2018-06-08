@@ -39,14 +39,14 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-p = Parent.new()
+local p = Parent.new()
 ok( p:isa 'Parent', "Simple" )
 ok( p.orig )
 _G.seen = {}
 p:orig 'val'
 eq_array( _G.seen, { 'orig : val' } )
 
-c = Child.new()
+local c = Child.new()
 ok( c:isa 'Child', "MultipleAround" )
 ok( c:isa 'Parent' )
 ok( c.orig )

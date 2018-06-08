@@ -31,7 +31,7 @@ end
 
 _G.seen = ''
 
-car = Car.new()
+local car = Car.new()
 ok( car:isa 'Car', "Car" )
 ok( car:does 'Breakable' )
 is( car.is_broken, nil )

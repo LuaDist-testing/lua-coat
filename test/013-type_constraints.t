@@ -23,7 +23,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new()
+local foo = Foo.new()
 foo.x = 43
 is( foo.x, 43 )
 foo.s = "text"

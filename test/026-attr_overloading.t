@@ -19,7 +19,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = A.new()
+local foo = A.new()
 ok( foo:isa 'A', "A" )
 is( foo.x, 42 )
 

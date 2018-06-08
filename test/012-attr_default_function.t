@@ -16,13 +16,13 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new{ t = 2 }
+local foo = Foo.new{ t = 2 }
 ok( foo:isa 'Foo', "Foo" )
 is( foo.t, 2 )
 
 foo = Foo.new()
 ok( foo:isa 'Foo', "Foo (default)" )
-val = foo.t
+local val = foo.t
 isnt( type(val), 'function' )
 is( val, 4 )
 

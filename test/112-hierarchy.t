@@ -26,10 +26,10 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-bar = MyApp.Bar.new()
+local bar = MyApp.Bar.new()
 ok( bar:isa 'MyApp.Bar', "MyApp.Bar" )
 
-foo = MyApp.Bar.Foo.new()
+local foo = MyApp.Bar.Foo.new()
 ok( foo:isa 'MyApp.Bar.Foo', "MyApp.Bar.Foo" )
 ok( foo:does 'MyApp.Biz' )
 foo.bar = 'bar'

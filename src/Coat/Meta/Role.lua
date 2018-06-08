@@ -3,12 +3,24 @@
 -- lua-Coat : <http://fperrad.github.io/lua-Coat/>
 --
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local _roles = {}
+local _rolenames = {}
+function _M.add_role (name, role)
+    _roles[name] = role
+    _rolenames[#_rolenames+1] = name
+end
+
 function _M.roles ()
-    return _roles
+    local i = 0
+    return  function ()
+                i = i + 1
+                local name = _rolenames[i]
+                local role = _roles[name]
+                return name, role
+            end
 end
 
 function _M.role (name)
@@ -45,7 +57,7 @@ end
 
 return _M
 --
--- Copyright (c) 2009-2010 Francois Perrad
+-- Copyright (c) 2009-2018 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

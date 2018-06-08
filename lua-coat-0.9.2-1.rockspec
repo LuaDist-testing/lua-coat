@@ -1,17 +1,17 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'lua-Coat'
-version = '0.9.1-1'
+version = '0.9.2-1'
 -- LuaDist source
 source = {
-  tag = "0.9.1-1",
+  tag = "0.9.2-1",
   url = "git://github.com/LuaDist-testing/lua-coat.git"
 }
 -- Original source
 -- source = {
---     url = 'http://sites.google.com/site/fperrad/lua-coat-0.9.1.tar.gz',
---     md5 = 'd002f006405063f102f1a9c4353618c4',
---     dir = 'lua-Coat-0.9.1',
+--     url = 'http://github.com/fperrad/lua-Coat/raw/releases/lua-coat-0.9.2.tar.gz',
+--     md5 = '4a409bb83b809d6324cb5e6df3ac0a54',
+--     dir = 'lua-Coat-0.9.2',
 -- }
 description = {
     summary = "Yet Another Lua Object-Oriented Model",
@@ -21,7 +21,7 @@ description = {
         an object system for Perl5 which borrows features from Perl6,
         CLOS (LISP), Smalltalk and many other languages.
     ]],
-    homepage = 'http://fperrad.github.com/lua-Coat/',
+    homepage = 'http://fperrad.github.io/lua-Coat/',
     maintainer = 'Francois Perrad',
     license = 'MIT/X11'
 }
@@ -43,5 +43,5 @@ build = {
     install = {
         bin = { 'src/coat2dot' }
     },
-    copy_directories = { 'doc', 'test' },
+    copy_directories = { 'docs', 'test' },
 }

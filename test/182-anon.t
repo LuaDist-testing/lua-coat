@@ -20,7 +20,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
 end
 
 type_ok( class, 'table', "Coat" )
-r = class{ x = 2, y = 4 }
+local r = class{ x = 2, y = 4 }
 like( r:type(), '_ANON_%d', "Rect" )
 ok( r:isa(class) )
 is( r:getArea(), 8, "area" )

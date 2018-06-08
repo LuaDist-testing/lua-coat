@@ -21,7 +21,7 @@ end
 
 type_ok( class, 'table', "Coat" )
 is( class, Rect )
-r = Rect{ x = 2, y = 4 }
+local r = Rect{ x = 2, y = 4 }
 is( r:type(), 'Rect', "Rect" )
 ok( r:isa(class) )
 is( r:getArea(), 8, "area" )

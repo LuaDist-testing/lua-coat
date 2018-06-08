@@ -41,7 +41,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-man = FragileDancer.new()
+local man = FragileDancer.new()
 ok( man:isa 'FragileDancer', "FragileDancer" )
 ok( man:does 'Breakable' )
 ok( man:does 'Breakdancer' )

@@ -25,8 +25,8 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = MyApp.A{ x = 1 }
-b = MyApp.B{ x = 2 }
+local a = MyApp.A{ x = 1 }
+local b = MyApp.B{ x = 2 }
 ok( a:isa 'MyApp.A' )
 ok( b:isa 'MyApp.B' )
 a.b = b

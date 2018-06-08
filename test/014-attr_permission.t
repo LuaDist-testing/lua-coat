@@ -18,7 +18,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new{ read = 4, write = 5, reset = 7 }
+local foo = Foo.new{ read = 4, write = 5, reset = 7 }
 is( foo.read, 4, "Foo" )
 is( foo.write, 5 )
 foo.write = 7

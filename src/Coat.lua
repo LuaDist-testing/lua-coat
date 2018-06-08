@@ -21,7 +21,7 @@ local loaded = require 'package'.loaded
 local string = require 'string'
 local table = require 'table'
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local Meta = require 'Coat.Meta.Class'
@@ -174,34 +174,34 @@ local function dump (obj, label)
         return sorted
     end -- keys_sorted
 
-    local function _dump (obj, indent, ref)
-        local tobj = basic_type(obj)
+    local function _dump (_obj, indent, ref)
+        local tobj = basic_type(_obj)
         if tobj == 'string' then
-            return string.format('%q', obj)
+            return string.format('%q', _obj)
         elseif tobj == 'table' then
-            if seen[obj] then
-                return seen[obj]
+            if seen[_obj] then
+                return seen[_obj]
             end
-            seen[obj] = ref
+            seen[_obj] = ref
             local indent2 = indent .. "  "
             local lines = {}
             local str
-            if obj._NAME then
-                str = obj._CLASS .. " {"
-                local sorted = keys_sorted(obj._VALUES)
+            if _obj._NAME then
+                str = _obj._CLASS .. " {"
+                local sorted = keys_sorted(_obj._VALUES)
                 for i = 1, #sorted do
                     local k = sorted[i]
-                    local v = rawget(obj._VALUES, k)
+                    local v = rawget(_obj._VALUES, k)
                     local line = indent2 .. k .. " = "
                                          .. _dump(v, indent2, ref .. '.' .. k) .. ",\n"
                     lines[#lines+1] = line
                 end
             else
                 str = "{"
-                local sorted = keys_sorted(obj)
+                local sorted = keys_sorted(_obj)
                 for i = 1, #sorted do
                     local k = sorted[i]
-                    local v = rawget(obj, k)
+                    local v = rawget(_obj, k)
                     local kr = "[" .. _dump(k, indent2) .. "]"
                     local line = indent2 .. kr .. " = "
                                          .. _dump(v, indent2, ref .. kr) .. ",\n"
@@ -213,7 +213,7 @@ local function dump (obj, label)
             end
             return str .. "}"
         else
-            return tostring(obj)
+            return tostring(_obj)
         end
     end -- _dump
 
@@ -452,6 +452,7 @@ local function has (class, name, options)
         options.lazy = true
     end
     class._ATTR[name] = options
+    class._ATTRNAME[#class._ATTRNAME+1] = name
 
     if options.is then
         class['_set_' .. name] = function (obj, val)
@@ -714,9 +715,9 @@ local function extends(class, ...)
                   .. class._NAME .."' and '" .. parent._NAME .. "'")
         end
 
-        local t = class._PARENT; t[#t+1] = parent
-        local t = class._ISA; t[#t+1] = parent._ISA
-        local t = class._DOES; t[#t+1] = parent._DOES
+        do local t = class._PARENT; t[#t+1] = parent; end
+        do local t = class._ISA; t[#t+1] = parent._ISA; end
+        do local t = class._DOES; t[#t+1] = parent._DOES; end
         local t = class._ROLE
         local roles = parent._ROLE
         for i = 1, #roles do
@@ -725,7 +726,7 @@ local function extends(class, ...)
     end
 
     local t = getmetatable(class)
-    t.__index = function (t, k)
+    t.__index = function (_t, k)
                     local function search (cl)
                         local parents = cl._PARENT
                         for i = 1, #parents do
@@ -738,14 +739,14 @@ local function extends(class, ...)
                     end -- search
 
                     local v = search(class)
-                    t[k] = v      -- save for next access
+                    _t[k] = v     -- save for next access
                     if v == nil then
                         v = _G[k]
                     end
                     return v
                 end
     local a = getmetatable(class._ATTR)
-    a.__index = function (t, k)
+    a.__index = function (_t, k)
                     local function search (cl)
                         local parents = cl._PARENT
                         for i = 1, #parents do
@@ -758,7 +759,7 @@ local function extends(class, ...)
                     end -- search
 
                     local v = search(class)
-                    t[k] = v      -- save for next access
+                    _t[k] = v     -- save for next access
                     return v
                 end
 end
@@ -775,14 +776,14 @@ local function with (class, ...)
                 if basic_type(alias) ~= 'table' then
                     argerror('with-alias', i, "table expected")
                 end
-                for old, new in pairs(alias) do
+                for old, _new in pairs(alias) do
                     if basic_type(old) ~= 'string' then
                         argerror('with-alias', i, "string expected")
                     end
-                    if basic_type(new) ~= 'string' then
+                    if basic_type(_new) ~= 'string' then
                         argerror('with-alias', i, "string expected")
                     end
-                    class[new] = class[old]
+                    class[_new] = class[old]
                 end
             end
             if v.excludes then
@@ -812,8 +813,8 @@ local function with (class, ...)
                 argerror('with', i, "string or Role expected")
             end
 
-            local t = class._DOES; t[#t+1] = role._NAME
-            local t = class._ROLE; t[#t+1] = role
+            do local t = class._DOES; t[#t+1] = role._NAME; end
+            do local t = class._ROLE; t[#t+1] = role; end
             local store = role._STORE
             for i = 1, #store do
                 local v = store[i]
@@ -871,6 +872,7 @@ local function class (modname)
     M._ROLE = {}
     M._MT = { __index = M }
     M._ATTR = setmetatable({}, {})
+    M._ATTRNAME = {}
     M._BINDING = {}
     M.type = type
     M.can = can
@@ -893,7 +895,7 @@ local function class (modname)
     M.extends = function (...) return extends(M, ...) end
     M.with = function (...) return with(M, ...) end
     M.memoize = function (name) return memoize(M, name) end
-    Meta.classes()[M._NAME] = M
+    Meta.add_class(M._NAME, M)
     return M
 end
 _M.class = class
@@ -919,12 +921,12 @@ function _G.abstract (modname)
     setfenv(2, M)
 end
 
-function _G.augment (class)
+function _G.augment (_class)
     local M
-    if basic_type(class) == 'string' then
-        M = require(class)
+    if basic_type(_class) == 'string' then
+        M = require(_class)
     elseif class._NAME then
-        M = class
+        M = _class
     end
     if not M or not M._INIT then
         argerror('augment', 1, "string or Class expected")
@@ -932,9 +934,9 @@ function _G.augment (class)
     setfenv(2, M)
 end
 
-_M._VERSION = "0.9.1"
+_M._VERSION = "0.9.2"
 _M._DESCRIPTION = "lua-Coat : Yet Another Lua Object-Oriented Model"
-_M._COPYRIGHT = "Copyright (c) 2009-2014 Francois Perrad"
+_M._COPYRIGHT = "Copyright (c) 2009-2018 Francois Perrad"
 return _M
 --
 -- This library is licensed under the terms of the MIT/X11 license,

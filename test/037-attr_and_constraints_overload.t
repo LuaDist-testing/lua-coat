@@ -38,7 +38,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Parent.new()
+local foo = Parent.new()
 ok( foo:isa 'Parent', "Parent" )
 is( foo.name, nil )
 foo.name = 'John'

@@ -1,0 +1,19 @@
+site_name: lua-Coat
+site_description: Yet Another Lua Object-Oriented Model
+site_author: François Perrad
+repo_url: https://github.com/fperrad/lua-Coat
+pages:
+- Home: index.md
+- API:
+  - Coat: coat.md
+  - Coat.Role: role.md
+  - Coat.Types: types.md
+  - Coat.Meta.Class: meta_class.md
+  - Coat.Meta.Role: meta_role.md
+  - Coat.UML: uml.md
+- Manual:
+  - Dependency Injection: inject.md
+  - Memoization: memoize.md
+  - Mock: mock.md
+theme: mkdocs
+copyright: Copyright &copy; 2009-2018 Fran&ccedil;ois Perrad

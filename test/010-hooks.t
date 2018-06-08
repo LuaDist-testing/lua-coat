@@ -45,14 +45,14 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-p = Parent.new()
+local p = Parent.new()
 ok( p:isa 'Parent', "Simple" )
 ok( p.pushelem )
 _G.list = {}
 p:pushelem 'Coat'
 eq_array( _G.list, { 'Coat' } )
 
-c = Child.new()
+local c = Child.new()
 ok( c:isa 'Child', "Multiple" )
 ok( c:isa 'Parent' )
 ok( c.pushelem )

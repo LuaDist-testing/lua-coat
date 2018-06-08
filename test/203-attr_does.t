@@ -29,7 +29,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-car = Car.new{ engine = Engine.new() }
+local car = Car.new{ engine = Engine.new() }
 ok( car:isa 'Car', "Car" )
 ok( car.engine:does 'Breakable' )
 is( car.engine.is_broken, nil )

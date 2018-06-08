@@ -7,12 +7,24 @@ local basic_type = type
 local setmetatable = setmetatable
 local next = next
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local _classes = {}
+local _classnames = {}
+function _M.add_class (name, class)
+    _classes[name] = class
+    _classnames[#_classnames+1] = name
+end
+
 function _M.classes ()
-    return _classes
+    local i = 0
+    return  function ()
+                i = i + 1
+                local name = _classnames[i]
+                local class = _classes[name]
+                return name, class
+            end
 end
 
 function _M.class (name)
@@ -42,7 +54,14 @@ local reserved = {
 }
 
 function _M.attributes (class)
-    return next, class._ATTR, nil
+    local i = 0
+    return  function ()
+                i = i + 1
+                local name = class._ATTRNAME[i]
+                if not name then return nil end
+                local attr = class._ATTR[name]
+                return name, attr
+            end
 end
 
 function _M.methods (class)
@@ -94,7 +113,7 @@ _M._CACHE = setmetatable({}, { __mode = 'v' })
 
 return _M
 --
--- Copyright (c) 2009-2010 Francois Perrad
+-- Copyright (c) 2009-2018 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

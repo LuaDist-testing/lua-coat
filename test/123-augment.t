@@ -16,7 +16,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-p = Point{x = 1, y = 2, color = 0xFF00FF}
+local p = Point{x = 1, y = 2, color = 0xFF00FF}
 is( p:type(), 'Point', "new" )
 ok( p:isa 'Point' )
 is( p.x, 1 )

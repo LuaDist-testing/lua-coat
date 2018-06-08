@@ -1,108 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <title>Dependency Injection</title>
-    <link rel="stylesheet" href="doc.css" type="text/css"/>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta http-equiv="Author" content="Fran&ccedil;ois Perrad"/>
-  <meta http-equiv="Language" content="en"/>
-  <meta http-equiv="Description" content="Dependency Injection with Coat"/>
-  <meta http-equiv="Keywords" content="lua, coat, class, inject, bind, dependency, injection"/>
-</head>
 
-<body>
+# Dependency Injection
 
-<div id="container">
+---
 
-<div id="product">
-  <div id="product_logo">
-    <a href="http://www.lua.org">
-      <img alt="Lua" src="http://www.andreas-rozek.de/Lua/Lua-Logo_128x128.png"/>
-    </a>
-  </div>
-  <div id="product_name"><big><strong>lua-Coat</strong></big></div>
-  <div id="product_description">Yet Another Lua Object-Oriented Model</div>
-</div> <!-- id="product" -->
+## Pizza Ordering
 
-<div id="main">
+This example is largely inspired by
+[guice](https://github.com/google/guice/wiki/Motivation).
 
-<div id="navigation">
-<h1>Dependency Injection</h1>
-  <ul>
-    <li><a href="index.html">Home</a>
-      <ul>
-        <li><a href="index.html#overview">Overview</a></li>
-        <li><a href="index.html#status">Status</a></li>
-        <li><a href="index.html#documentation">Documentation</a></li>
-        <li><a href="index.html#download">Download</a></li>
-        <li><a href="index.html#installation">Installation</a></li>
-        <li><a href="index.html#test">Test</a></li>
-        <li><a href="index.html#license">License</a></li>
-      </ul>
-    </li>
-    <li><a href="coat.html">module <code>Coat</code></a>
-      <ul>
-        <li><a href="coat.html#reference">Reference</a></li>
-        <li><a href="coat.html#examples">Examples</a></li>
-      </ul>
-    </li>
-    <li><a href="role.html">module <code>Coat.Role</code></a>
-      <ul>
-        <li><a href="role.html#reference">Reference</a></li>
-        <li><a href="role.html#examples">Examples</a></li>
-      </ul>
-    </li>
-    <li><a href="types.html">module <code>Coat.Types</code></a>
-      <ul>
-        <li><a href="types.html#reference">Reference</a></li>
-        <li><a href="types.html#examples">Examples</a></li>
-      </ul>
-    </li>
-    <li><a href="meta_class.html">module <code>C.Meta.Class</code></a>
-      <ul>
-        <li><a href="meta_class.html#reference">Reference</a></li>
-      </ul>
-    </li>
-    <li><a href="meta_role.html">module <code>C.Meta.Role</code></a>
-      <ul>
-        <li><a href="meta_role.html#reference">Reference</a></li>
-      </ul>
-    </li>
-    <li><a href="uml.html">module <code>Coat.UML</code></a>
-      <ul>
-        <li><a href="uml.html#reference">Reference</a></li>
-        <li><a href="uml.html#examples">Examples</a></li>
-      </ul>
-    </li>
-    <li><strong>Manual</strong>
-      <ul>
-        <li><strong>Dependency Injection</strong></li>
-        <li><a href="memoize.html">Memoization</a></li>
-        <li><a href="mock.html">Mock</a></li>
-      </ul>
-    </li>
-    <li><a href="http://fperrad.github.io/lua-Coat/">Project</a>
-      <ul>
-        <li><a href="http://github.com/fperrad/lua-Coat/">Git</a></li>
-        <li><script type="text/javascript" src="http://www.ohloh.net/p/359564/widgets/project_thin_badge.js"></script></li>
-      </ul>
-    </li>
-  </ul>
-</div> <!-- id="navigation" -->
+![inject.png](img/inject.png)
 
-<div id="content">
-
-<h2><a name="examples"></a>Examples</h2>
-
-<h3>Pizza Ordering</h3>
-
-<p>This example is largely inspired by
-<a href="http://code.google.com/p/google-guice/wiki/Motivation">guice</a>.</p>
-
-<p><img src="inject.png" alt="inject.png" height="100%" width="100%"/></p>
-
-<pre class="example">
+```lua
 -- file PizzaOrder.lua
 require 'Coat'
 
@@ -116,8 +24,9 @@ class 'Receipt'
 has._type           = { is = 'ro', isa = 'ReceiptType', required = true }
 has.amount          = { is = 'ro', isa = 'number' }
 has.message         = { is = 'ro', isa = 'string' }
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file CreditCard.lua
 require 'Coat'
 
@@ -129,22 +38,25 @@ has.yearValidity    = { is = 'ro', isa = 'number', required = true }
 class 'ChargeResult'
 has.wasSuccessful   = { is = 'ro', isa = 'boolean', required = true }
 has.declineMessage  = { is = 'ro', isa = 'string' }
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file CreditCardProcessor.lua
 require 'Coat.Role'
 
 role 'CreditCardProcessor'
 requires 'charge'
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file TransactionLog.lua
 require 'Coat.Role'
 
 role 'TransactionLog'
 requires 'logChargeResult'
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file BillingService.lua
 require 'Coat'
 
@@ -169,8 +81,9 @@ function method:chargeOrder (order, creditCard)
         }
     end
 end
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file PaypalCreditCardProcessor.lua
 require 'Coat'
 
@@ -180,8 +93,9 @@ with 'CreditCardProcessor'
 function method:charge (creditCard, amount)
 --  TODO
 end
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file FakeCreditCardProcessor.lua
 require 'Coat'
 
@@ -200,8 +114,9 @@ function method:charge (creditCard, amount)
         wasSuccessful = self.nextResult,
     }
 end
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file DatabaseTransactionLog.lua
 require 'Coat'
 
@@ -214,13 +129,15 @@ has.threadPoolSize  = { is = 'ro', isa = 'number', default = 10 }
 function method:logChargeResult (result)
 --  TODO
 end
+```
 
+```lua
 -- file InMemoryTransactionLog
 require 'Coat'
 class 'InMemoryTransactionLog'
 with 'TransactionLog'
 
-has.log             = { is = 'rw', isa = 'table&lt;ChargeResult&gt;',
+has.log             = { is = 'rw', isa = 'table<ChargeResult>',
                         default = function () return {} end }
 has.lastRecord      = { is = 'rw', isa = 'ChargeResult' }
 
@@ -228,8 +145,9 @@ function method:logChargeResult (result)
     self.lastRecord = result
     table.insert(self.log, result)
 end
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file RealBillingService.lua
 require 'Coat'
 
@@ -244,8 +162,9 @@ bind.TransactionLog = function ()
         threadPoolSize = 30,
     }
 end
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file RealBillingServiceTest.lua
 require 'Coat'
 
@@ -253,14 +172,16 @@ class 'RealBillingServiceTest'
 extends 'BillingService'
 bind.CreditCardProcessor = 'FakeCreditCardProcessor'
 bind.TransactionLog = 'InMemoryTransactionLog'
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file main.lua
 require 'RealBillingService'
 local billingService = RealBillingService()
 assert(billingService.processor:isa 'PaypalCreditCardProcessor')
-</pre>
-<pre class="example">
+```
+
+```lua
 -- file test.lua
 require 'RealBillingServiceTest'
 require 'PizzaOrder'
@@ -284,16 +205,4 @@ assert(billingService.processor.lastCard.yearValidity == 2010)
 local record = billingService.transactionLog.lastRecord
 assert(record.wasSuccessful == true)
 print "ok"
-</pre>
-
-</div> <!-- id="content" -->
-
-</div> <!-- id="main" -->
-
-<div id="about">
-</div> <!-- id="about" -->
-
-</div> <!-- id="container" -->
-
-</body>
-</html>
+```

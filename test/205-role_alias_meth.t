@@ -35,14 +35,14 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = A.new()
+local a = A.new()
 ok( a:isa 'A', "A" )
 ok( a.m1 )
 ok( a.m2 )
 is( a:m1(), 'm1' )
 is( a:m2(), 'm1m2' )
 
-b = B.new()
+local b = B.new()
 ok( b:isa 'B', "B" )
 ok( b.m1 )
 ok( b.m2 )
@@ -51,7 +51,7 @@ ok( b.foo_m2 )
 is( b:m1(), 'm1' )
 is( b:m2(), 'm1m2' )
 
-c = C.new()
+local c = C.new()
 ok( c:isa 'C', "C" )
 is( c.m1, nil )
 is( c.m2, nil )

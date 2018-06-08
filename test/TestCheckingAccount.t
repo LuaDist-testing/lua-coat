@@ -16,7 +16,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-savings_account = BankAccount{ balance = 250 }
+local savings_account = BankAccount{ balance = 250 }
 ok( savings_account:isa 'BankAccount', "BankAccount" )
 is( savings_account.balance, 250 )
 savings_account:withdraw( 50 )
@@ -25,7 +25,7 @@ savings_account:deposit( 150 )
 is( savings_account.balance, 350 )
 
 savings_account = BankAccount{ balance = 350 }
-checking_account = CheckingAccount{ balance = 100, overdraft_account = savings_account }
+local checking_account = CheckingAccount{ balance = 100, overdraft_account = savings_account }
 ok( checking_account:isa 'CheckingAccount', "CheckingAccount" )
 ok( checking_account:isa 'BankAccount' )
 is( checking_account.overdraft_account, savings_account )
@@ -45,6 +45,6 @@ is( checking_account.balance, 100 )
 is( checking_account.balance, 100 )
 checking_account:withdraw(50)
 is( checking_account.balance, 50 )
-error_like([[checking_account:withdraw(200)]],
+error_like(function () checking_account:withdraw(200) end,
            "Account overdrawn")
 

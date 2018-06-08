@@ -39,7 +39,7 @@ end
 
 local mc = require 'Coat.Meta.Class'
 
-man = Person.new{ name = 'John' }
+local man = Person.new{ name = 'John' }
 ok( man:isa 'Person', "Person" )
 ok( man:isa(Person) )
 ok( man:isa(man) )
@@ -53,7 +53,7 @@ ok( Soldier:isa 'Person' )
 ok( Soldier:isa(Person) )
 ok( Soldier:isa(man) )
 
-soldier = Soldier.new{ name = 'Dude' }
+local soldier = Soldier.new{ name = 'Dude' }
 ok( soldier:isa 'Soldier', "Soldier" )
 ok( soldier:isa 'Person' )
 ok( soldier:isa(Person) )
@@ -64,7 +64,7 @@ is( soldier.force, 3 )
 ok( soldier:walk() )
 ok( soldier:attack() )
 
-general = General.new{ name = 'Smith' }
+local general = General.new{ name = 'Smith' }
 ok( general:isa 'General', "General" )
 ok( general:isa 'Soldier' )
 ok( general:isa 'Person' )

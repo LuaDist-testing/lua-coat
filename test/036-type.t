@@ -23,7 +23,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = A()
+local foo = A()
 foo.a = A()
 is( foo.a:type(), 'A', "A" )
 foo.a = B()

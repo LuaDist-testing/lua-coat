@@ -3,13 +3,12 @@
 -- lua-Coat : <http://fperrad.github.io/lua-Coat/>
 --
 
-local pairs = pairs
 local table = require 'table'
 
 local mc = require 'Coat.Meta.Class'
 local mr = require 'Coat.Meta.Role'
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local function escape (txt)
@@ -60,12 +59,69 @@ function _M.to_dot (opt)
     local with_meth = not opt.no_meth
     local with_meta = not opt.no_meta
     local note = opt.note
-    local out = 'digraph {\n\n    node [shape=record];\n\n'
+    local out = 'digraph {\n\n    node [shape=record];\n    nodesep = 0.5;\n    ranksep = 0.8;\n\n'
     if note then
         out = out .. '    "__note__"\n'
         out = out .. '        [label="' .. note .. '" shape=note];\n\n'
     end
-    for classname, class in pairs(mc.classes()) do
+    for rolename, role in mr.roles() do
+        out = out .. '    "' .. rolename .. '"\n'
+        out = out .. '        [label="{&laquo;role&raquo;\\n\\N'
+        if with_attr then
+            local first = true
+            for name, attr in sort(mr.attributes(role)) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name
+                if attr.isa then
+                    out = out .. ' : ' .. escape(attr.isa)
+                elseif attr.does then
+                    out = out .. ' : ' .. attr.does
+                end
+                out = out .. '\\l'
+            end
+        end
+        if with_meth then
+            local first = true
+            for name in sort(mr.methods(role)) do
+                if first then
+                    out = out .. '|'
+                    first = false
+                end
+                out = out .. name .. '()\\l'
+            end
+        end
+        out = out .. '}"];\n\n'
+        local first = true
+        for name, attr in mr.attributes(role) do
+            if attr.isa then
+                local isa, agreg = find_type(attr.isa)
+                if isa then
+                    out = out .. '    "' .. rolename .. '" -> "' .. isa .. '" // attr isa ' .. attr.isa .. '\n'
+                    if agreg then
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = odiamond];\n'
+                    else
+                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
+                    end
+                    if first then
+                        out = out .. '        {rank = same; "' .. rolename .. '"; "' .. isa .. '"}\n'
+                        first = false
+                    end
+                end
+            end
+            if attr.does and mr.role(attr.does) then
+                out = out .. '    "' .. rolename .. '" -> "' .. attr.does .. '" // attr does\n'
+                out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
+                if first then
+                    out = out .. '        {rank = same; "' .. rolename .. '"; "' .. attr.does .. '"}\n'
+                    first = false
+                end
+            end
+        end
+    end
+    for classname, class in mc.classes() do
         out = out .. '    "' .. classname .. '"\n'
         out = out .. '        [label="{'
         if class.instance then
@@ -108,6 +164,7 @@ function _M.to_dot (opt)
             end
         end
         out = out .. '}"];\n'
+        local first = true
         for name, attr in mc.attributes(class) do
             if attr.isa then
                 local isa, agreg = find_type(attr.isa)
@@ -118,70 +175,30 @@ function _M.to_dot (opt)
                     else
                         out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
                     end
+                    if first then
+                        out = out .. '        {rank = same; "' .. classname .. '"; "' .. isa .. '"}\n'
+                        first = false
+                    end
                 end
             end
             if attr.does and mr.role(attr.does) then
                 out = out .. '    "' .. classname .. '" -> "' .. attr.does .. '" // attr does\n'
                 out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
+                if first then
+                    out = out .. '        {rank = same; "' .. classname .. '"; "' .. attr.does .. '"}\n'
+                    first = false
+                end
             end
-        end
-        for parent in mc.parents(class) do
-            out = out .. '    "' .. classname .. '" -> "' .. parent .. '" // extends\n'
-            out = out .. '        [arrowhead = onormal, arrowtail = none, arrowsize = 2.0];\n'
         end
         for role in mc.roles(class) do
-            out = out .. '    "' .. classname .. '" -> "' .. role .. '" // with\n'
-            out = out .. '        [arrowhead = odot, arrowtail = none];\n'
+            out = out .. '    "' .. role .. '" -> "' .. classname .. '" // with\n'
+            out = out .. '        [arrowtail = onormal, dir = back, style = dashed, arrowhead = none, arrowsize = 2.0];\n'
+        end
+        for parent in mc.parents(class) do
+            out = out .. '    "' .. parent .. '" -> "' .. classname .. '" // extends\n'
+            out = out .. '        [arrowtail = onormal, dir = back, arrowhead = none, arrowsize = 2.0];\n'
         end
         out = out .. '\n'
-    end
-    for rolename, role in pairs(mr.roles()) do
-        out = out .. '    "' .. rolename .. '"\n'
-        out = out .. '        [label="{&laquo;role&raquo;\\n\\N'
-        if with_attr then
-            local first = true
-            for name, attr in sort(mr.attributes(role)) do
-                if first then
-                    out = out .. '|'
-                    first = false
-                end
-                out = out .. name
-                if attr.isa then
-                    out = out .. ' : ' .. escape(attr.isa)
-                elseif attr.does then
-                    out = out .. ' : ' .. attr.does
-                end
-                out = out .. '\\l'
-            end
-        end
-        if with_meth then
-            local first = true
-            for name in sort(mr.methods(role)) do
-                if first then
-                    out = out .. '|'
-                    first = false
-                end
-                out = out .. name .. '()\\l'
-            end
-        end
-        out = out .. '}"];\n\n'
-        for name, attr in mr.attributes(role) do
-            if attr.isa then
-                local isa, agreg = find_type(attr.isa)
-                if isa then
-                    out = out .. '    "' .. rolename .. '" -> "' .. isa .. '" // attr isa ' .. attr.isa .. '\n'
-                    if agreg then
-                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = odiamond];\n'
-                    else
-                        out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
-                    end
-                end
-            end
-            if attr.does and mr.role(attr.does) then
-                out = out .. '    "' .. rolename .. '" -> "' .. attr.does .. '" // attr does\n'
-                out = out .. '        [label = "' .. name .. '", dir = back, arrowtail = diamond];\n'
-            end
-        end
     end
     out = out .. '}'
     return out
@@ -189,7 +206,7 @@ end
 
 return _M
 --
--- Copyright (c) 2009-2010 Francois Perrad
+-- Copyright (c) 2009-2018 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

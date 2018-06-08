@@ -33,13 +33,13 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo{ x = 0, y = 0 }
+local foo = Foo{ x = 0, y = 0 }
 ok( foo:isa 'Foo', "Foo" )
 is( foo.x, 0 )
 is( foo.y, 0 )
 is( foo.z, 42 )
 
-bar = Bar{}
+local bar = Bar{}
 ok( bar:isa 'Bar', "Bar" )
 ok( bar:isa 'Foo' )
 is( bar.x, 42 )

@@ -5,7 +5,6 @@
 local setmetatable = setmetatable
 local pairs = pairs
 local _G = _G
-local table = require 'table'
 local Coat = require 'Coat'
 
 local checktype = Coat.checktype
@@ -13,7 +12,7 @@ local does = Coat.does
 local error = Coat.error
 local isa = Coat.isa
 
-_ENV = nil
+local _ENV = nil
 local _M = {}
 
 local _TC = {}
@@ -27,9 +26,9 @@ local function find_type_constraint (name)
     local capt = name:match'^table(%b<>)$'
     if capt then
         local function check_type (val, tname)
-            local tc = find_type_constraint(tname)
-            if tc then
-                return check_type(val, tc.parent) and tc.validator(val)
+            local t = find_type_constraint(tname)
+            if t then
+                return check_type(val, t.parent) and t.validator(val)
             else
                 return isa(val, tname) or does(val, tname)
             end
@@ -163,7 +162,7 @@ _G.coerce = _coerce ''
 
 return _M
 --
--- Copyright (c) 2009-2010 Francois Perrad
+-- Copyright (c) 2009-2018 Francois Perrad
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.

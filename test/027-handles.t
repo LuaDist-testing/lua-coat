@@ -38,7 +38,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Spanish.new()
+local foo = Spanish.new()
 ok( foo:isa "Spanish", "Spanish" )
 ok( foo.uno )
 is( foo:uno(), 1 )

@@ -1,7 +1,7 @@
 package = 'lua-Coat'
 version = '@version@-@rev@'
 source = {
-    url = 'http://sites.google.com/site/fperrad/lua-coat-@version@.tar.gz',
+    url = 'http://github.com/fperrad/lua-Coat/raw/releases/lua-coat-@version@.tar.gz',
     md5 = '@md5@',
     dir = 'lua-Coat-@version@',
 }
@@ -13,7 +13,7 @@ description = {
         an object system for Perl5 which borrows features from Perl6,
         CLOS (LISP), Smalltalk and many other languages.
     ]],
-    homepage = 'http://fperrad.github.com/lua-Coat/',
+    homepage = 'http://fperrad.github.io/lua-Coat/',
     maintainer = 'Francois Perrad',
     license = 'MIT/X11'
 }
@@ -35,5 +35,5 @@ build = {
     install = {
         bin = { 'src/coat2dot' }
     },
-    copy_directories = { 'doc', 'test' },
+    copy_directories = { 'docs', 'test' },
 }

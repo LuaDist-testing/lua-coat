@@ -27,7 +27,7 @@ and the sources are hosted at [http://github.com/fperrad/lua-Coat](http://github
 Copyright and License
 ---------------------
 
-Copyright (c) 2009-2014 Francois Perrad
+Copyright (c) 2009-2018 Francois Perrad
 
 This library is licensed under the terms of the MIT/X11 license, like Lua itself.
 

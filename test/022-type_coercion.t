@@ -25,7 +25,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Record{ timestamp = 'now' }
+local foo = Record{ timestamp = 'now' }
 ok( foo:isa 'Record', "direct" )
 is( foo.timestamp, 'now' )
 

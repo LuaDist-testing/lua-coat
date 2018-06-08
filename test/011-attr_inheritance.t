@@ -32,29 +32,29 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new()
+local foo = Foo.new()
 ok( foo:isa 'Foo', "Foo" )
 is( foo.field_from_foo_string, nil )
 is( foo.field_from_foo_int, 1 )
 
-bar = Bar.new()
+local bar = Bar.new()
 ok( bar:isa 'Bar', "Bar" )
 is( bar.field_from_foo_string, nil )
 is( bar.field_from_bar, nil )
 is( bar.field_from_foo_int, 1 )
 
-baz = Baz.new()
+local baz = Baz.new()
 ok( baz:isa 'Baz', "Baz" )
 is( baz.field_from_foo_string, nil )
 is( baz.field_from_bar, nil )
 is( baz.field_from_baz, nil )
 is( baz.field_from_foo_int, 2 )
 
-biz = Biz.new()
+local biz = Biz.new()
 ok( biz:isa 'Biz', "Biz" )
 is( biz.field_from_biz, nil )
 
-bal = BalBaz.new()
+local bal = BalBaz.new()
 ok( bal:isa 'BalBaz', "BalBaz" )
 is( bal.field_from_foo_string, nil )
 is( bal.field_from_bar, nil )

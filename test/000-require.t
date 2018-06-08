@@ -18,9 +18,9 @@ like( m._VERSION, '^%d%.%d%.%d$' )
 
 is( m.math, nil, "check ns pollution" )
 
-function err ()
+local function err ()
     m.error "MSG" -- line 22
 end
-local r, msg = pcall(err)
+local _, msg = pcall(err)
 like( msg, "000%-require%.t:22: MSG", "error" )
 

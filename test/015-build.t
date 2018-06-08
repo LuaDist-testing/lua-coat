@@ -20,7 +20,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new{ var = 4 }
+local foo = Foo.new{ var = 4 }
 ok( foo:isa 'Foo', "Foo" )
 is( foo.var, 2 )
 

@@ -15,7 +15,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = Point{x = 1, y = 2}
+local a = Point{x = 1, y = 2}
 is( a:type(), 'Point', "new" )
 ok( a:isa 'Point' )
 type_ok( a._get_x, 'function', "accessors" )
@@ -48,11 +48,11 @@ type_ok( a.y, 'number')
 is( a.x, 1 )
 is( a.y, 2 )
 is( tostring(a), "(1, 2)" )
-error_like([[a.x = "number expected"]],
+error_like(function () a.x = "number expected" end,
            "Invalid type for attribute",
            "check type")
 
-error_like([[a = Point{x = "x", y = "y"}]],
+error_like(function () local _ = Point{x = "x", y = "y"} end,
            "Invalid type for attribute",
            "new (bad)")
 

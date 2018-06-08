@@ -25,12 +25,12 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = A()
+local a = A()
 ok( a:isa 'A' )
 
-many_a = {}
+local many_a = {}
 for _ = 1, 10 do table.insert(many_a, A() ) end
-many_b = {}
+local many_b = {}
 for _ = 1, 10 do table.insert(many_b, B() ) end
 
 lives_ok( function () a.many_a = many_a end, "array of objects A accepted" )

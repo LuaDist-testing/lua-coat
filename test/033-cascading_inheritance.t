@@ -28,7 +28,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Four.new()
+local foo = Four.new()
 is( foo.one, 1, "attr" )
 is( foo.two, 2 )
 is( foo.three, 3 )

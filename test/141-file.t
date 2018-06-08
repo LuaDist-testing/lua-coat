@@ -28,17 +28,17 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-f = io.tmpfile()
+local f = io.tmpfile()
 type_ok( f, 'userdata', "file is a userdata" )
 is( io.type(f), 'file' )
-foo = Foo.new{ log = f }
+local foo = Foo.new{ log = f }
 ok( foo:isa 'Foo', "isa" )
 
-bar = Bar.new{ log = f }
+local bar = Bar.new{ log = f }
 ok( bar:isa 'Bar', "isa" )
 f:close()
 is( io.type(f), 'closed file' )
-error_like(function () baz = Bar.new{ log = f } end,
+error_like(function () local _ = Bar.new{ log = f } end,
            "Value for attribute 'log' does not validate type constraint 'OpenedFile'")
 
 

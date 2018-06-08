@@ -18,7 +18,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new{ bar = 10, baz = 20, boo = 100 }
+local foo = Foo.new{ bar = 10, baz = 20, boo = 100 }
 ok( foo:isa 'Foo', "Foo1" )
 is( foo.bar, 10 )
 is( foo.baz, 20 )

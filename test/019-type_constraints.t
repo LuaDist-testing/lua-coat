@@ -41,7 +41,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-factory = NumberFactory()
+local factory = NumberFactory()
 factory.n = 24
 is( factory.n , 24, "Natural" )
 error_like([[local factory = NumberFactory(); factory.n = "text"]],

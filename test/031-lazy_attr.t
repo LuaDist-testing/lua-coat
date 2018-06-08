@@ -25,7 +25,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-a = A.new()
+local a = A.new()
 ok( a:isa 'A', "A" )
 is( a._VALUES.x, nil )
 is( a._VALUES.y, 2 )
@@ -35,7 +35,7 @@ error_like([[A.has.z = { isa = 'number', is = 'rw', lazy = true }]],
            "The lazy option implies the builder or default option",
            "bad")
 
-foo = Foo.new{ dir = '/tmp', name = 'file' }
+local foo = Foo.new{ dir = '/tmp', name = 'file' }
 ok( foo:isa 'Foo', "Foo" )
 is( foo.name , 'file' )
 is( foo.path, '/tmp/file' )

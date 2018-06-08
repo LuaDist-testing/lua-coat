@@ -21,7 +21,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-child = Child.new{ bar = 1, baz = 2 }
+local child = Child.new{ bar = 1, baz = 2 }
 ok( child:isa 'Child', "Child" )
 ok( child:isa 'Parent' )
 is( child.bar, 1 )

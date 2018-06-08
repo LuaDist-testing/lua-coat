@@ -16,7 +16,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.new()
+local foo = Foo.new()
 is( foo.attr, nil )
 foo.attr = 2
 is( foo.attr, 2 )

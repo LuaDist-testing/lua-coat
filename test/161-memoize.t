@@ -28,7 +28,7 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo()
+local foo = Foo()
 ok( foo:isa 'Foo', "Foo" )
 is( foo.cntCall, 0 )
 is( foo:sum(1, 2), 3 )

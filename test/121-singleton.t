@@ -16,15 +16,15 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
-foo = Foo.instance{ var = 4 }
+local foo = Foo.instance{ var = 4 }
 ok( foo:isa 'Foo', "Foo" )
 is( foo.var, 4 )
 
-bar = Foo.instance()
+local bar = Foo.instance()
 ok( bar:isa 'Foo' )
 is( foo, bar )
 
-baz = Foo()
+local baz = Foo()
 ok( baz:isa 'Foo' )
 is( foo, baz )
 
