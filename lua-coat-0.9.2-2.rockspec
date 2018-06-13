@@ -1,15 +1,15 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'lua-Coat'
-version = '0.9.2-1'
+version = '0.9.2-2'
 -- LuaDist source
 source = {
-  tag = "0.9.2-1",
-  url = "git://github.com/LuaDist-testing/lua-coat.git"
+  url = "git://github.com/LuaDist-testing/lua-coat.git",
+  tag = "0.9.2-2"
 }
 -- Original source
 -- source = {
---     url = 'http://github.com/fperrad/lua-Coat/raw/releases/lua-coat-0.9.2.tar.gz',
+--     url = 'https://framagit.org/fperrad/lua-Coat/raw/releases/lua-coat-0.9.2.tar.gz',
 --     md5 = '4a409bb83b809d6324cb5e6df3ac0a54',
 --     dir = 'lua-Coat-0.9.2',
 -- }
@@ -21,13 +21,12 @@ description = {
         an object system for Perl5 which borrows features from Perl6,
         CLOS (LISP), Smalltalk and many other languages.
     ]],
-    homepage = 'http://fperrad.github.io/lua-Coat/',
+    homepage = 'http://fperrad.frama.io/lua-Coat/',
     maintainer = 'Francois Perrad',
     license = 'MIT/X11'
 }
 dependencies = {
     'lua >= 5.1',
-    'lua-testmore >= 0.2.3',
 }
 build = {
     type = 'builtin',
